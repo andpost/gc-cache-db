@@ -2,11 +2,9 @@ package com.andreaspost.gc.cachedb.persistence;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,9 +18,7 @@ import javax.ejb.Singleton;
 
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Morphia;
-import org.mongodb.morphia.utils.ReflectionUtils;
 
-import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.ServerAddress;
@@ -47,9 +43,11 @@ public class MongoDBClientProvider {
 
 	private Datastore datastore;
 
+	private Properties properties;
+
 	@PostConstruct
 	public void init() {
-		Properties properties = getPersistenceProperties();
+		loadPersistenceProperties();
 
 		String host = properties.getProperty(PROPERTY_PREFIX + "host");
 		int port = Integer.parseInt(properties.getProperty(PROPERTY_PREFIX + "port"));
@@ -60,26 +58,8 @@ public class MongoDBClientProvider {
 		mongoClient = new MongoClient(new ServerAddress(host, port), settings);
 		morphia = new Morphia();
 
-		String mapPackage = properties.getProperty("morphia.map.package");
-
-		if (mapPackage != null) {
-			LOG.info(mapPackage);
-			try {
-				for (final Class clazz : getClasses(mapPackage)) {
-					LOG.info(clazz.getName());
-				}
-
-				for (final Class clazz : ReflectionUtils.getClasses(mapPackage,
-						morphia.getMapper().getOptions().isMapSubPackages())) {
-					LOG.info(clazz.getName());
-				}
-			} catch (ClassNotFoundException | IOException e) {
-				LOG.log(Level.SEVERE, "Error mapping package " + mapPackage, e);
-			}
-			// morphia.mapPackage(mapPackage);
-		}
-		// TODO Fix Issue with package mapping
-		morphia.map(GeoCacheEntity.class);
+		// Morphia.mapPackages doesn't work for war files :(
+		getMappingClasses().stream().forEach(clazz -> morphia.map(clazz));
 
 		datastore = morphia.createDatastore(mongoClient, dbName);
 		datastore.ensureIndexes();
@@ -101,51 +81,44 @@ public class MongoDBClientProvider {
 		}
 	}
 
-	private Properties getPersistenceProperties() {
+	/**
+	 * Load properties from file.
+	 */
+	private void loadPersistenceProperties() {
 		String resourceName = PROPERTIES_FILE;
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		Properties props = new Properties();
+		properties = new Properties();
 
 		try (InputStream resourceStream = loader.getResourceAsStream(resourceName)) {
-			props.load(resourceStream);
+			properties.load(resourceStream);
 		} catch (IOException e) {
 			LOG.log(Level.WARNING, "Error loading " + PROPERTIES_FILE, e);
 		}
-		return props;
 	}
 
-	public static Set<Class<?>> getClasses(final String packageName) throws IOException, ClassNotFoundException {
-		final ClassLoader loader = Thread.currentThread().getContextClassLoader();
-		final Set<Class<?>> classes = new HashSet<Class<?>>();
-		final String path = packageName.replace('.', '/');
-		final Enumeration<URL> resources = loader.getResources(path);
-		if (resources != null) {
-			while (resources.hasMoreElements()) {
-				String filePath = resources.nextElement().getFile();
-				// WINDOWS HACK
-				if (filePath.indexOf("%20") > 0) {
-					filePath = filePath.replaceAll("%20", " ");
-				}
-				if (filePath.indexOf("\\") > 0) {
-					filePath = filePath.replaceAll("\\", "/");
-				}
-				// # in the jar name
-				if (filePath.indexOf("%23") > 0) {
-					filePath = filePath.replaceAll("%23", "#");
-				}
+	/**
+	 * Get a list of entity classes to map for morphia.
+	 * 
+	 * @return
+	 */
+	private List<Class<?>> getMappingClasses() {
+		List<Class<?>> clazzes = new ArrayList<>();
 
-				if (filePath != null) {
-					if (filePath.indexOf(".war") > 0) {
-						String jarPath = filePath.substring(0, filePath.indexOf(".war") + 4);
-						// WINDOWS HACK
-						if (jarPath.contains(":")) {
-							jarPath = jarPath.substring(1);
-						}
-						classes.addAll(ReflectionUtils.getFromJARFile(loader, jarPath, path, true));
-					}
+		String mapEntities = properties.getProperty("morphia.map.entities");
+
+		if (mapEntities != null && !mapEntities.trim().isEmpty()) {
+			String[] split = mapEntities.split(",");
+
+			for (String className : split) {
+				try {
+					clazzes.add(Class.forName(className));
+				} catch (ClassNotFoundException e) {
+					LOG.log(Level.WARNING, "Error loading class: " + className, e);
 				}
 			}
 		}
-		return classes;
+
+		return clazzes;
 	}
+
 }
