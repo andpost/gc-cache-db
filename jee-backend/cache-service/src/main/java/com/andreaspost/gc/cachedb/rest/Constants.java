@@ -7,5 +7,5 @@ public class Constants {
 
 	public static final String MEDIA_TYPE_JSON = "application/json";
 
-	public static final String CACHE_RESOURCE_PATH = "rest/cache/";
+	public static final String GEOCACHE_RESOURCE_PATH = "rest/cache/";
 }

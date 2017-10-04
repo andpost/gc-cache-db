@@ -1,6 +1,7 @@
 package com.andreaspost.gc.cachedb.service;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
@@ -10,6 +11,7 @@ import org.bson.types.ObjectId;
 
 import com.andreaspost.gc.cachedb.persistence.PersistenceService;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
+import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.andreaspost.gc.cachedb.service.converter.GeoCacheEntityConverter;
 
@@ -22,29 +24,12 @@ import com.andreaspost.gc.cachedb.service.converter.GeoCacheEntityConverter;
 @LocalBean
 public class GeoCacheService {
 
+	private static final Logger LOG = Logger.getLogger(GeoCacheService.class.getName());
+
 	@Inject
 	PersistenceService persistenceService;
 
 	private GeoCacheEntityConverter entityConverter = new GeoCacheEntityConverter();
-
-	/**
-	 * Get a geocache by id.
-	 * 
-	 * @param id
-	 *            String representation of object id.
-	 * @param expandDetails
-	 *            If true returnes all data of the geocache.
-	 * @return {@link GeoCache} if match found or null.
-	 */
-	public GeoCache getGeoCache(String id, boolean expandDetails) {
-		GeoCacheEntity entity = persistenceService.getGeoCache(new ObjectId(id), expandDetails);
-
-		if (entity == null) {
-			return null;
-		}
-
-		return entityConverter.decode(entity);
-	}
 
 	/**
 	 * Get a geocache by GC Code.
@@ -78,9 +63,24 @@ public class GeoCacheService {
 	 * Create a new geocache.
 	 * 
 	 * @param geoCache
-	 * @return The new geocache including its id.
+	 * @return The new or updated geocache including its id.
 	 */
-	public GeoCache createGeoCache(GeoCache geoCache) {
+	public GeoCache createGeoCache(GeoCache geoCache) throws DuplicateGeoCacheException {
+
+		GeoCacheEntity entity = entityConverter.encode(geoCache);
+
+		entity = persistenceService.createGeoCache(entity);
+
+		return entityConverter.decode(entity);
+	}
+
+	/**
+	 * Create or update a geocache.
+	 * 
+	 * @param geoCache
+	 * @return The new or updated geocache including its id.
+	 */
+	public GeoCache createOrUpdateGeoCache(GeoCache geoCache) {
 
 		GeoCacheEntity entity = entityConverter.encode(geoCache);
 
@@ -90,7 +90,12 @@ public class GeoCacheService {
 			mergeEntities(entity, persistentEntity);
 		}
 
-		entity = persistenceService.createGeoCache(entity);
+		try {
+			entity = persistenceService.createGeoCache(entity);
+		} catch (DuplicateGeoCacheException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
 		return entityConverter.decode(entity);
 	}

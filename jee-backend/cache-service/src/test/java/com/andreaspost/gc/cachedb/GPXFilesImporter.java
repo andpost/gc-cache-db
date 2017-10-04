@@ -10,6 +10,7 @@ import java.time.ZoneId;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.ws.rs.core.Response.Status;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
@@ -25,9 +26,16 @@ import com.andreaspost.gc.cachedb.rest.resource.User;
 import com.groundspeak.cache._1._0._1.Cache;
 import com.groundspeak.cache._1._0._1.Cache.Logs.Log.Finder;
 import com.groundspeak.cache._1._0._1.Cache.Owner;
+import com.jayway.restassured.response.Response;
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Wpt;
 
+/**
+ * Test class used for importing geocaching.com GPX files and importing them
+ * using the REST API.
+ * 
+ * @author Andreas Post
+ */
 public class GPXFilesImporter extends TestsBase {
 
 	private static final Logger LOG = Logger.getLogger(GPXFilesImporter.class.getName());
@@ -49,7 +57,7 @@ public class GPXFilesImporter extends TestsBase {
 	}
 
 	/**
-	 * Import all waypoints on the given gpx file.
+	 * Import all waypoints from the given gpx file.
 	 * 
 	 * @param file
 	 * @param category
@@ -108,11 +116,15 @@ public class GPXFilesImporter extends TestsBase {
 						}
 					}
 
-					given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect().put("cache");
+					Response response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
+							.put("cache");
+
+					response.then().assertThat().statusCode(Status.OK.getStatusCode());
 
 				}
+				// break;
 			}
-			Thread.sleep(5);
+			// Thread.sleep(5);
 
 			System.out.println("Imported " + wptList.size() + " Geocaches from " + file.getName());
 		} catch (Exception e) {

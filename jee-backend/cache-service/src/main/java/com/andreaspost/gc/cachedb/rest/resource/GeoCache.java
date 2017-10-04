@@ -9,6 +9,8 @@ import org.geojson.Point;
 
 public class GeoCache {
 
+	private String href;
+
 	private String gcCode;
 
 	private String name;
@@ -296,6 +298,21 @@ public class GeoCache {
 	 */
 	public void setId(String id) {
 		this.id = id;
+	}
+
+	/**
+	 * @return the href
+	 */
+	public String getHref() {
+		return href;
+	}
+
+	/**
+	 * @param href
+	 *            the href to set
+	 */
+	public void setHref(String href) {
+		this.href = href;
 	}
 
 	/*
