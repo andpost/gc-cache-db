@@ -104,4 +104,8 @@ public class PersistenceService {
 
 		return query.field("coordinates").near(point, radius).asList();
 	}
+
+	public String hello() {
+		return "hello";
+	}
 }
