@@ -49,7 +49,8 @@ public class GPXFilesImporter extends TestsBase {
 			File[] listFiles = folder.listFiles((f, name) -> name.toLowerCase().endsWith(".gpx"));
 
 			for (File file : listFiles) {
-				doImport(file);
+				// activate this line to start importing data
+				// doImport(file);
 			}
 		} catch (Exception e) {
 			fail("Error accessing resources directory: " + e.getMessage());

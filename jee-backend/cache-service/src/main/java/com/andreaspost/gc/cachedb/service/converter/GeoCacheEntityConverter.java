@@ -43,7 +43,9 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		geoCache.setCoordinates(
 				new Point(entity.getCoordinates().getLongitude(), entity.getCoordinates().getLatitude()));
 
-		geoCache.setOwner(userConverter.decode(entity.getOwner()));
+		if (entity.getOwner() != null) {
+			geoCache.setOwner(userConverter.decode(entity.getOwner()));
+		}
 
 		geoCache.setLogs(logConverter.decode(entity.getLogs()));
 
@@ -75,7 +77,9 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		entity.setCoordinates(GeoJson.point(geoCache.getCoordinates().getCoordinates().getLatitude(),
 				geoCache.getCoordinates().getCoordinates().getLongitude()));
 
-		entity.setOwner(userConverter.encode(geoCache.getOwner()));
+		if (geoCache.getOwner() != null) {
+			entity.setOwner(userConverter.encode(geoCache.getOwner()));
+		}
 
 		entity.setLogs(logConverter.encode(geoCache.getLogs()));
 

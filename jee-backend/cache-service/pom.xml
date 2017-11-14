@@ -31,6 +31,11 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+			<groupId>org.jboss.spec.javax.interceptor</groupId>
+			<artifactId>jboss-interceptors-api_1.2_spec</artifactId>
+			<scope>provided</scope>
+		</dependency>
+        <dependency>
             <groupId>org.jboss.spec.javax.ejb</groupId>
             <artifactId>jboss-ejb-api_3.2_spec</artifactId>
             <scope>provided</scope>
@@ -71,6 +76,31 @@
               <artifactId>morphia</artifactId>
               <version>1.3.2</version>
           </dependency>
+          
+        <!-- Tests -->
+        
+        <dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-surefire-plugin</artifactId>
+			<version>2.20.1</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>slf4j-nop</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-jdk14</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-failsafe-plugin</artifactId>
+			<version>2.13</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -94,24 +124,24 @@
 		    <scope>test</scope>
 		</dependency>
 		
-		<dependency>
-		    <groupId>org.jboss.arquillian.junit</groupId>
-		    <artifactId>arquillian-junit-container</artifactId>
-		    <scope>test</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 		    <groupId>org.jboss.arquillian.junit</groupId> -->
+<!-- 		    <artifactId>arquillian-junit-container</artifactId> -->
+<!-- 		    <scope>test</scope> -->
+<!-- 		</dependency> -->
 		
-		<dependency>
-            <groupId>org.jboss.arquillian.container</groupId>
-            <artifactId>arquillian-glassfish-embedded-3.1</artifactId>
-            <version>1.0.0.CR4</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.main.extras</groupId>
-            <artifactId>glassfish-embedded-all</artifactId>
-            <version>3.1.2</version>
-            <scope>provided</scope>
-        </dependency>
+<!-- 		<dependency> -->
+<!--             <groupId>org.jboss.arquillian.container</groupId> -->
+<!--             <artifactId>arquillian-glassfish-embedded-3.1</artifactId> -->
+<!--             <version>1.0.0.CR4</version> -->
+<!--             <scope>test</scope> -->
+<!--         </dependency> -->
+<!--         <dependency> -->
+<!--             <groupId>org.glassfish.main.extras</groupId> -->
+<!--             <artifactId>glassfish-embedded-all</artifactId> -->
+<!--             <version>3.1.2</version> -->
+<!--             <scope>provided</scope> -->
+<!--         </dependency> -->
 		
 <!-- 		<dependency> -->
 <!-- 		    <groupId>org.jboss.arquillian.container</groupId> -->
@@ -161,13 +191,13 @@
                 <artifactId>jaxrs-api</artifactId>
                 <version>${version.org.jboss.resteasy.resteasy-jaxrs-all}</version>
             </dependency>
-			<dependency>
-	            <groupId>org.jboss.arquillian</groupId>
-	            <artifactId>arquillian-bom</artifactId>
-	            <version>1.1.13.Final</version>
-	            <scope>import</scope>
-	            <type>pom</type>
-	        </dependency>
+<!-- 			<dependency> -->
+<!-- 	            <groupId>org.jboss.arquillian</groupId> -->
+<!-- 	            <artifactId>arquillian-bom</artifactId> -->
+<!-- 	            <version>1.1.13.Final</version> -->
+<!-- 	            <scope>import</scope> -->
+<!-- 	            <type>pom</type> -->
+<!-- 	        </dependency> -->
 		</dependencies>
 
 	</dependencyManagement>
@@ -193,13 +223,14 @@
 				<artifactId>wildfly-maven-plugin</artifactId>
 				<executions>
                     <execution>
-                        <phase>install</phase>
+                        <phase>pre-integration-test</phase>
                         <goals>
                             <goal>deploy</goal>
                         </goals>
                     </execution>
                 </executions>
 			</plugin>
+			
 			<!-- Plugin required to build java classes from XSD using XJC -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
