@@ -6,12 +6,14 @@ import java.util.logging.Logger;
 
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.geo.Point;
 import org.mongodb.morphia.geo.PointBuilder;
 import org.mongodb.morphia.query.Query;
 
+import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
 import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
 import com.mongodb.DuplicateKeyException;
@@ -23,6 +25,7 @@ import com.mongodb.WriteResult;
  * @author Andreas Post
  */
 @Stateless
+@Interceptors({ MethodLoggingInterceptor.class })
 public class PersistenceService {
 
 	private static final Logger LOG = Logger.getLogger(PersistenceService.class.getName());

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -22,7 +23,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriInfo;
 
+import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
+import com.andreaspost.gc.cachedb.rest.interceptors.RequestLoggingInterceptor;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.andreaspost.gc.cachedb.service.GeoCacheService;
 
@@ -32,6 +35,7 @@ import com.andreaspost.gc.cachedb.service.GeoCacheService;
  * @author Andreas Post
  */
 @Path(GeoCacheResourceController.GEOCACHE_RESOURCE_PATH)
+@Interceptors({ RequestLoggingInterceptor.class, MethodLoggingInterceptor.class })
 public class GeoCacheResourceController {
 
 	public static final String GEOCACHE_RESOURCE_PATH = "rest/cache/";
