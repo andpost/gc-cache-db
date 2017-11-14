@@ -6,9 +6,11 @@ import java.util.logging.Logger;
 import javax.ejb.LocalBean;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
+import javax.interceptor.Interceptors;
 
 import org.bson.types.ObjectId;
 
+import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.PersistenceService;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
 import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
@@ -22,6 +24,7 @@ import com.andreaspost.gc.cachedb.service.converter.GeoCacheEntityConverter;
  */
 @Stateless
 @LocalBean
+@Interceptors({ MethodLoggingInterceptor.class })
 public class GeoCacheService {
 
 	private static final Logger LOG = Logger.getLogger(GeoCacheService.class.getName());
