@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
@@ -128,6 +129,15 @@ public class GeoCacheResourceController {
 		GeoCache result = geoCacheService.createOrUpdateGeoCache(geoCache);
 
 		return Response.ok().header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
+	}
+
+	@DELETE
+	@Path("{gccode}")
+	public Response deleteGeoCache(@PathParam("gccode") String gcCode) {
+
+		geoCacheService.deleteGeoCacheByGcCode(gcCode);
+
+		return Response.noContent().header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
 	}
 
 	private void addResourceURL(GeoCache geoCache) {

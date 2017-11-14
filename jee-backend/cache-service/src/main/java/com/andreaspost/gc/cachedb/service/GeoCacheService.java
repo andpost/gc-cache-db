@@ -8,8 +8,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.bson.types.ObjectId;
-
 import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.PersistenceService;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
@@ -54,12 +52,13 @@ public class GeoCacheService {
 	}
 
 	/**
-	 * Delete a geocache by id.
+	 * Delete a geocache by GC Code.
 	 * 
-	 * @param id
+	 * @param gcCode
+	 *            GC Code (unique identifier)
 	 */
-	public void deleteGeoCache(String id) {
-		persistenceService.deleteGeoCache(new ObjectId(id));
+	public void deleteGeoCacheByGcCode(String gcCode) {
+		persistenceService.deleteGeoCacheByGcCode(gcCode);
 	}
 
 	/**

@@ -8,7 +8,6 @@ import javax.ejb.Stateless;
 import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 
-import org.bson.types.ObjectId;
 import org.mongodb.morphia.geo.Point;
 import org.mongodb.morphia.geo.PointBuilder;
 import org.mongodb.morphia.query.Query;
@@ -73,14 +72,18 @@ public class PersistenceService {
 	}
 
 	/**
-	 * Delete a geocache by id.
+	 * Delete a geocache by GC Code.
 	 * 
 	 * @param id
 	 */
-	public void deleteGeoCache(ObjectId id) {
-		LOG.info("deleteGeoCache: " + id);
+	public void deleteGeoCacheByGcCode(String gcCode) {
+		LOG.info("deleteGeoCacheByGcCode: " + gcCode);
 
-		WriteResult writeResult = mongoDBClientProvider.getDatastore().delete(GeoCacheEntity.class, id);
+		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
+
+		query.field("gcCode").equal(gcCode);
+
+		WriteResult writeResult = mongoDBClientProvider.getDatastore().delete(query);
 
 		LOG.info(writeResult.toString());
 	}
