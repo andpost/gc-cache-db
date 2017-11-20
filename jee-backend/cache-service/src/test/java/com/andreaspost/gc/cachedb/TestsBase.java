@@ -4,14 +4,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.geojson.Point;
 import org.junit.Before;
 
+import com.andreaspost.gc.cachedb.rest.resource.CacheType;
+import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.ConnectionConfig;
 import com.jayway.restassured.response.Header;
@@ -29,6 +33,9 @@ public abstract class TestsBase {
 	protected static final String CONTENT_TYPE = "application/json; charset=UTF-8";
 
 	protected static final String BASE_PATH = "cachedb/";
+
+	protected static final String GC_CODE = "GC1234";
+	protected static final Point COORDS = new Point(51.1234, 13.1234);
 
 	protected Headers headers;
 
@@ -92,5 +99,22 @@ public abstract class TestsBase {
 			}
 		}
 		return result;
+	}
+
+	/**
+	 * Create a dummy cache for testing.
+	 * 
+	 * TODO add more fields
+	 * 
+	 * @return
+	 */
+	protected GeoCache getDummyGeoCache() {
+		GeoCache cache = new GeoCache(GC_CODE);
+		cache.setPlacedAt(LocalDateTime.of(2017, 01, 01, 12, 12));
+
+		cache.setCoordinates(COORDS);
+		cache.setType(CacheType.MYSTERY);
+
+		return cache;
 	}
 }

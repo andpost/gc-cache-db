@@ -2,11 +2,13 @@ package com.andreaspost.gc.cachedb.rest.controller;
 
 import java.text.MessageFormat;
 
+import javax.inject.Inject;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.UriInfo;
 
 import com.andreaspost.gc.cachedb.rest.resource.BaseResource;
+import com.andreaspost.gc.cachedb.service.GeoCacheService;
 
 /**
  * Abstract base class for resource controllers.
@@ -21,6 +23,9 @@ abstract class AbstractResourceController<R extends BaseResource> {
 
 	@Context
 	private UriInfo uriInfo;
+
+	@Inject
+	private GeoCacheService geoCacheService;
 
 	protected UriInfo getUriInfo() {
 		return uriInfo;
@@ -58,7 +63,19 @@ abstract class AbstractResourceController<R extends BaseResource> {
 	 * @param resource
 	 */
 	protected void addResourceURL(R resource) {
-		resource.setHref(getUriInfo().getBaseUri().toString() + getResourcePath() + resource.getId());
+		resource.setHref(getUriInfo().getBaseUri().toString() + getResourcePath() + getResourceId(resource));
+	}
+
+	/**
+	 * Returns the id for the given resource. Default returns {@link R#getId()}.
+	 * 
+	 * Must be overriden, if another field should be used as resource id.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	protected String getResourceId(R resource) {
+		return resource.getId();
 	}
 
 	protected int getDefaultLimit() {
@@ -162,5 +179,12 @@ abstract class AbstractResourceController<R extends BaseResource> {
 
 			responseBuilder.link(MessageFormat.format(PAGINATION_PATTERN, baseResourceUriString, newOffset, limit), "prev");
 		}
+	}
+
+	/**
+	 * @return the geoCacheService
+	 */
+	protected GeoCacheService getGeoCacheService() {
+		return geoCacheService;
 	}
 }

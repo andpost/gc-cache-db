@@ -14,6 +14,7 @@ import org.mongodb.morphia.query.Query;
 
 import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
+import com.andreaspost.gc.cachedb.persistence.entity.LogEntity;
 import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
 import com.mongodb.DuplicateKeyException;
 import com.mongodb.WriteResult;
@@ -69,6 +70,20 @@ public class PersistenceService {
 		// return mongoDBClientProvider.getDatastore().get(GeoCacheEntity.class,
 		// id);
 		// }
+	}
+
+	public boolean addLog(String gcCode, LogEntity log) {
+		GeoCacheEntity geoCache = getGeoCacheByGcCode(gcCode, false);
+
+		if (geoCache == null) {
+			return false;
+		}
+
+		geoCache.getLogs().add(log);
+
+		mongoDBClientProvider.getDatastore().merge(geoCache);
+
+		return true;
 	}
 
 	/**

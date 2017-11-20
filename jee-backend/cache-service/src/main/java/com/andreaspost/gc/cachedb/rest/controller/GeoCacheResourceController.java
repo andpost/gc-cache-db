@@ -6,7 +6,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
 import javax.interceptor.Interceptors;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -27,25 +26,21 @@ import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheExcepti
 import com.andreaspost.gc.cachedb.rest.interceptors.RequestExceptionInterceptor;
 import com.andreaspost.gc.cachedb.rest.interceptors.RequestLoggingInterceptor;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
-import com.andreaspost.gc.cachedb.service.GeoCacheService;
 
 /**
  * Resource controller for {@link GeoCache} resource.
  * 
  * @author Andreas Post
  */
-@Path(GeoCacheResourceController.GEOCACHE_RESOURCE_PATH)
+@Path(GeoCacheResourceController.RESOURCE_PATH)
 @Interceptors({ RequestLoggingInterceptor.class, MethodLoggingInterceptor.class, RequestExceptionInterceptor.class })
 public class GeoCacheResourceController extends AbstractResourceController<GeoCache> {
 
-	public static final String GEOCACHE_RESOURCE_PATH = "caches/";
+	public static final String RESOURCE_PATH = "caches/";
 
 	private static final Logger LOG = Logger.getLogger(GeoCacheResourceController.class.getName());
 
 	private static final String EXPAND_LOGS = "logs";
-
-	@Inject
-	GeoCacheService geoCacheService;
 
 	/**
 	 * Retrieves a geocache resource by gc code.
@@ -59,7 +54,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCache(@PathParam("gccode") String gcCode, @QueryParam("expand") String expand) {
 
-		GeoCache geoCache = geoCacheService.getGeoCacheByGcCode(gcCode, EXPAND_LOGS.equalsIgnoreCase(expand));
+		GeoCache geoCache = getGeoCacheService().getGeoCacheByGcCode(gcCode, EXPAND_LOGS.equalsIgnoreCase(expand));
 
 		if (geoCache == null) {
 			return Response.status(Status.NOT_FOUND).header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
@@ -83,7 +78,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 	public Response listGeoCaches(@QueryParam("lat") double latitude, @QueryParam("lon") double longitude,
 			@QueryParam("radius") int radius, @QueryParam("expand") String expand) {
 
-		List<GeoCache> cacheList = geoCacheService.listGeoCaches(latitude, longitude, radius,
+		List<GeoCache> cacheList = getGeoCacheService().listGeoCaches(latitude, longitude, radius,
 				EXPAND_LOGS.equalsIgnoreCase(expand));
 
 		cacheList.stream().forEach(c -> addResourceURL(c));
@@ -98,7 +93,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 		GeoCache result;
 
 		try {
-			result = geoCacheService.createGeoCache(geoCache);
+			result = getGeoCacheService().createGeoCache(geoCache);
 			addResourceURL(result);
 		} catch (DuplicateGeoCacheException e) {
 			return Response.status(Status.CONFLICT).header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
@@ -121,7 +116,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 
 		// LOG.info(geoCache.toString());
 
-		GeoCache result = geoCacheService.createOrUpdateGeoCache(geoCache);
+		GeoCache result = getGeoCacheService().createOrUpdateGeoCache(geoCache);
 
 		// TODO if new entry then add location header?
 
@@ -132,14 +127,22 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 	@Path("{gccode}")
 	public Response deleteGeoCache(@PathParam("gccode") String gcCode) {
 
-		geoCacheService.deleteGeoCacheByGcCode(gcCode);
+		getGeoCacheService().deleteGeoCacheByGcCode(gcCode);
 
 		return Response.noContent().header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
 	}
 
 	@Override
 	String getResourcePath() {
-		return GEOCACHE_RESOURCE_PATH;
+		return RESOURCE_PATH;
+	}
+
+	/**
+	 * Returns {@link GeoCache#getGcCode()} as id of this resource.
+	 */
+	@Override
+	protected String getResourceId(GeoCache resource) {
+		return resource.getGcCode();
 	}
 
 }

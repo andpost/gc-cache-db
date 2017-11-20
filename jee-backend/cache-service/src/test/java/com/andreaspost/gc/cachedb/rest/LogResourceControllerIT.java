@@ -1,13 +1,10 @@
 package com.andreaspost.gc.cachedb.rest;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import java.io.IOException;
-import java.util.logging.Level;
+import java.time.LocalDateTime;
 import java.util.logging.Logger;
 
 import javax.ws.rs.core.Response.Status;
@@ -16,24 +13,19 @@ import org.junit.Test;
 
 import com.andreaspost.gc.cachedb.TestsBase;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.andreaspost.gc.cachedb.rest.resource.Log;
+import com.andreaspost.gc.cachedb.rest.resource.LogType;
 import com.jayway.restassured.response.Response;
 
-/**
- * REST API Tests for {@link GeoCache} resource.
- * 
- * @author Andreas Post
- */
-public class GeoCacheResourceControllerIT extends TestsBase {
+public class LogResourceControllerIT extends TestsBase {
 
-	private static final Logger LOG = Logger.getLogger(GeoCacheResourceControllerIT.class.getName());
+	private static final Logger LOG = Logger.getLogger(LogResourceControllerIT.class.getName());
 
 	@Test
-	public void crudTest() {
+	public void addLogTest() {
 		GeoCache cache = getDummyGeoCache();
 
-		// 1. Create
+		// 1. Create cache
 		Response response = given().headers(headers).contentType(CONTENT_TYPE).body(cache).expect()
 				.log().all().post("caches");
 
@@ -44,22 +36,15 @@ public class GeoCacheResourceControllerIT extends TestsBase {
 		assertNotNull("Location header must not be null", location);
 		assertTrue("Location header must include resource path.", location.contains("caches/"));
 
-		// 2. Read
-		response = given().headers(headers).contentType(CONTENT_TYPE).expect().get(location);
+		Log log = createDummyLog();
 
-		response.then().assertThat().statusCode(Status.OK.getStatusCode());
+		// add a log
+		response = given().headers(headers).contentType(CONTENT_TYPE).body(log).expect()
+				.log().all().post("caches/" + GC_CODE + "/logs");
 
-		GeoCache responseCache = null;
+		response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
 
-		try {
-			responseCache = new ObjectMapper().readValue(response.body().asString(), new TypeReference<GeoCache>() {
-			});
-		} catch (IOException e) {
-			LOG.log(Level.SEVERE, "Unable to parse resource response.", e);
-			fail(e.getMessage());
-		}
-
-		assertEquals("GC Code must be the same.", GC_CODE, responseCache.getGcCode());
+		// TODO check GET log
 
 		// 3. Delete
 		response = given().headers(headers).contentType(CONTENT_TYPE).expect().log().all().delete(location);
@@ -70,5 +55,18 @@ public class GeoCacheResourceControllerIT extends TestsBase {
 		response = given().headers(headers).contentType(CONTENT_TYPE).expect().log().all().get(location);
 
 		response.then().assertThat().statusCode(Status.NOT_FOUND.getStatusCode());
+
+		// TODO check deletion of log
 	}
+
+	private Log createDummyLog() {
+		Log log = new Log();
+
+		log.setId("123456");
+		log.setDate(LocalDateTime.now());
+		log.setType(LogType.FOUND_IT);
+
+		return log;
+	}
+
 }

@@ -21,7 +21,10 @@ public class LogEntityConverter extends AbstractEntityConverter<Log, LogEntity> 
 		log.setDate(entity.getDate());
 		log.setText(entity.getText());
 		log.setType(LogType.of(entity.getType()));
-		log.setFinder(userConverter.decode(entity.getFinder()));
+
+		if (entity.getFinder() != null) {
+			log.setFinder(userConverter.decode(entity.getFinder()));
+		}
 
 		return log;
 	}
@@ -38,7 +41,10 @@ public class LogEntityConverter extends AbstractEntityConverter<Log, LogEntity> 
 		entity.setDate(log.getDate());
 		entity.setText(log.getText());
 		entity.setType(log.getType().getName());
-		entity.setFinder(userConverter.encode(log.getFinder()));
+
+		if (log.getFinder() != null) {
+			entity.setFinder(userConverter.encode(log.getFinder()));
+		}
 
 		return entity;
 	}

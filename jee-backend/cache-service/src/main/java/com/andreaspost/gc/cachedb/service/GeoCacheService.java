@@ -11,9 +11,12 @@ import javax.interceptor.Interceptors;
 import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.PersistenceService;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
+import com.andreaspost.gc.cachedb.persistence.entity.LogEntity;
 import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
+import com.andreaspost.gc.cachedb.rest.resource.Log;
 import com.andreaspost.gc.cachedb.service.converter.GeoCacheEntityConverter;
+import com.andreaspost.gc.cachedb.service.converter.LogEntityConverter;
 
 /**
  * The geocache service.
@@ -30,7 +33,9 @@ public class GeoCacheService {
 	@Inject
 	PersistenceService persistenceService;
 
-	private GeoCacheEntityConverter entityConverter = new GeoCacheEntityConverter();
+	private static final GeoCacheEntityConverter geoCacheEntityConverter = new GeoCacheEntityConverter();
+
+	private static final LogEntityConverter logConverter = new LogEntityConverter();
 
 	/**
 	 * Get a geocache by GC Code.
@@ -48,7 +53,7 @@ public class GeoCacheService {
 			return null;
 		}
 
-		return entityConverter.decode(entity);
+		return geoCacheEntityConverter.decode(entity);
 	}
 
 	/**
@@ -69,11 +74,11 @@ public class GeoCacheService {
 	 */
 	public GeoCache createGeoCache(GeoCache geoCache) throws DuplicateGeoCacheException {
 
-		GeoCacheEntity entity = entityConverter.encode(geoCache);
+		GeoCacheEntity entity = geoCacheEntityConverter.encode(geoCache);
 
 		entity = persistenceService.createGeoCache(entity);
 
-		return entityConverter.decode(entity);
+		return geoCacheEntityConverter.decode(entity);
 	}
 
 	/**
@@ -84,7 +89,7 @@ public class GeoCacheService {
 	 */
 	public GeoCache createOrUpdateGeoCache(GeoCache geoCache) {
 
-		GeoCacheEntity entity = entityConverter.encode(geoCache);
+		GeoCacheEntity entity = geoCacheEntityConverter.encode(geoCache);
 
 		GeoCacheEntity persistentEntity = persistenceService.getGeoCacheByGcCode(geoCache.getGcCode(), true);
 
@@ -99,7 +104,7 @@ public class GeoCacheService {
 			e.printStackTrace();
 		}
 
-		return entityConverter.decode(entity);
+		return geoCacheEntityConverter.decode(entity);
 	}
 
 	/**
@@ -115,7 +120,20 @@ public class GeoCacheService {
 	public List<GeoCache> listGeoCaches(double lat, double lon, int radius, boolean expandDetails) {
 		List<GeoCacheEntity> entityList = persistenceService.listGeoCaches(lat, lon, radius, expandDetails);
 
-		return entityConverter.decode(entityList);
+		return geoCacheEntityConverter.decode(entityList);
+	}
+
+	/**
+	 * Adds a log to the geo cache by the given gcCode.
+	 * 
+	 * @param gcCode
+	 * @param log
+	 * @return TRUE if the log entry could be added.
+	 */
+	public boolean addLog(String gcCode, Log log) {
+		LogEntity logEntity = logConverter.encode(log);
+
+		return persistenceService.addLog(gcCode, logEntity);
 	}
 
 	/**
