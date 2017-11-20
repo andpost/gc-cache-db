@@ -28,7 +28,7 @@ public abstract class TestsBase {
 
 	protected static final String CONTENT_TYPE = "application/json; charset=UTF-8";
 
-	protected static final String BASE_PATH = "cachedb/rest";
+	protected static final String BASE_PATH = "cachedb/";
 
 	protected Headers headers;
 

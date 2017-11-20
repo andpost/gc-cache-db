@@ -7,7 +7,12 @@ import com.andreaspost.gc.cachedb.rest.converter.LocalDateTimeSerializer;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-public class Log implements Comparable<Log> {
+/**
+ * Resource representing a geo cache log entry.
+ * 
+ * @author Andreas Post
+ */
+public class Log extends BaseResource implements Comparable<Log> {
 
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -19,17 +24,23 @@ public class Log implements Comparable<Log> {
 
 	private String text;
 
-	private String id;
-
 	public Log() {
 	}
 
+	public Log(String id) {
+		super(id);
+	}
+
+	public Log(String href, String id) {
+		super(href, id);
+	}
+
 	public Log(LocalDateTime date, LogType type, User finder, String text, String id) {
+		super(id);
 		this.date = date;
 		this.type = type;
 		this.finder = finder;
 		this.text = text;
-		this.id = id;
 	}
 
 	/**
@@ -92,21 +103,6 @@ public class Log implements Comparable<Log> {
 		this.text = text;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -114,7 +110,7 @@ public class Log implements Comparable<Log> {
 	 */
 	@Override
 	public String toString() {
-		return "Log [date=" + date + ", type=" + type + ", finder=" + finder + ", text=" + text + ", id=" + id + "]";
+		return "Log [date=" + date + ", type=" + type + ", finder=" + finder + ", text=" + text + "]";
 	}
 
 	@Override

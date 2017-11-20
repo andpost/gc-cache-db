@@ -7,6 +7,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -79,6 +80,7 @@ public class GeoCacheResourceControllerIT extends TestsBase {
 
 	private GeoCache getDummyGeoCache() {
 		GeoCache cache = new GeoCache(GC_CODE);
+		cache.setPlacedAt(LocalDateTime.of(2017, 01, 01, 12, 12));
 
 		cache.setCoordinates(COORDS);
 		cache.setType(CacheType.MYSTERY);

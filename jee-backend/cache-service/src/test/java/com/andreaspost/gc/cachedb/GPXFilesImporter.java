@@ -85,6 +85,11 @@ public class GPXFilesImporter extends TestsBase {
 					geoCache.setName(cache.getName());
 					geoCache.setCoordinates(new Point(wpt.getLon().doubleValue(), wpt.getLat().doubleValue()));
 					geoCache.setType(CacheType.of(cache.getType()));
+
+					if (wpt.getTime() != null) {
+						geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
+					}
+
 					geoCache.setPlacedBy(cache.getPlacedBy());
 					geoCache.setContainer(cache.getContainer());
 					geoCache.setDifficulty(Float.parseFloat(cache.getDifficulty()));

@@ -17,12 +17,10 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.UriInfo;
 
 import com.andreaspost.gc.cachedb.interceptors.MethodLoggingInterceptor;
 import com.andreaspost.gc.cachedb.persistence.exception.DuplicateGeoCacheException;
@@ -38,16 +36,13 @@ import com.andreaspost.gc.cachedb.service.GeoCacheService;
  */
 @Path(GeoCacheResourceController.GEOCACHE_RESOURCE_PATH)
 @Interceptors({ RequestLoggingInterceptor.class, MethodLoggingInterceptor.class, RequestExceptionInterceptor.class })
-public class GeoCacheResourceController {
+public class GeoCacheResourceController extends AbstractResourceController<GeoCache> {
 
-	public static final String GEOCACHE_RESOURCE_PATH = "rest/caches/";
+	public static final String GEOCACHE_RESOURCE_PATH = "caches/";
 
 	private static final Logger LOG = Logger.getLogger(GeoCacheResourceController.class.getName());
 
 	private static final String EXPAND_LOGS = "logs";
-
-	@Context
-	protected UriInfo uriInfo;
 
 	@Inject
 	GeoCacheService geoCacheService;
@@ -128,6 +123,8 @@ public class GeoCacheResourceController {
 
 		GeoCache result = geoCacheService.createOrUpdateGeoCache(geoCache);
 
+		// TODO if new entry then add location header?
+
 		return Response.ok().header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
 	}
 
@@ -140,8 +137,9 @@ public class GeoCacheResourceController {
 		return Response.noContent().header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
 	}
 
-	private void addResourceURL(GeoCache geoCache) {
-		geoCache.setHref(uriInfo.getBaseUri().toString() + GEOCACHE_RESOURCE_PATH + geoCache.getGcCode());
+	@Override
+	String getResourcePath() {
+		return GEOCACHE_RESOURCE_PATH;
 	}
 
 }

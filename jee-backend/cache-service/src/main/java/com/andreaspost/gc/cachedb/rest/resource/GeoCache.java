@@ -1,5 +1,6 @@
 package com.andreaspost.gc.cachedb.rest.resource;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -7,15 +8,27 @@ import java.util.TreeSet;
 
 import org.geojson.Point;
 
-public class GeoCache {
+import com.andreaspost.gc.cachedb.rest.converter.LocalDateTimeDeserializer;
+import com.andreaspost.gc.cachedb.rest.converter.LocalDateTimeSerializer;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
-	private String href;
+/**
+ * Resource representing geo cache data.
+ * 
+ * @author Andreas Post
+ */
+public class GeoCache extends BaseResource {
 
 	private String gcCode;
 
 	private String name;
 
 	private Point coordinates;
+
+	@JsonSerialize(using = LocalDateTimeSerializer.class)
+	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
+	private LocalDateTime placedAt;
 
 	private String placedBy;
 
@@ -35,14 +48,16 @@ public class GeoCache {
 	private String encodedHints;
 	private Set<Log> logs = new TreeSet<>();
 
-	private String id;
-
 	public GeoCache() {
 
 	}
 
 	public GeoCache(String gcCode) {
 		this.gcCode = gcCode;
+	}
+
+	public GeoCache(String href, String id) {
+		super(href, id);
 	}
 
 	/**
@@ -88,6 +103,21 @@ public class GeoCache {
 	 */
 	public void setCoordinates(Point coordinates) {
 		this.coordinates = coordinates;
+	}
+
+	/**
+	 * @return the placedAt
+	 */
+	public LocalDateTime getPlacedAt() {
+		return placedAt;
+	}
+
+	/**
+	 * @param placedAt
+	 *            the placedAt to set
+	 */
+	public void setPlacedAt(LocalDateTime placedAt) {
+		this.placedAt = placedAt;
 	}
 
 	/**
@@ -285,36 +315,6 @@ public class GeoCache {
 		this.logs = logs;
 	}
 
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id
-	 *            the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return the href
-	 */
-	public String getHref() {
-		return href;
-	}
-
-	/**
-	 * @param href
-	 *            the href to set
-	 */
-	public void setHref(String href) {
-		this.href = href;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -326,7 +326,7 @@ public class GeoCache {
 				+ placedBy + ", owner=" + owner + ", type=" + type + ", container=" + container + ", attributes="
 				+ attributes + ", difficulty=" + difficulty + ", terrain=" + terrain + ", country=" + country
 				+ ", state=" + state + ", shortDescription=" + shortDescription + ", longDescription=" + longDescription
-				+ ", encodedHints=" + encodedHints + ", logs=" + logs + ", id=" + id + "]";
+				+ ", encodedHints=" + encodedHints + ", logs=" + logs + "]";
 	}
 
 }
