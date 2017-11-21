@@ -3,8 +3,6 @@ package com.andreaspost.gc.cachedb.rest.resource;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.geojson.Point;
 
@@ -46,7 +44,6 @@ public class GeoCache extends BaseResource {
 	private String longDescription;
 
 	private String encodedHints;
-	private Set<Log> logs = new TreeSet<>();
 
 	public GeoCache() {
 
@@ -300,21 +297,6 @@ public class GeoCache extends BaseResource {
 		this.encodedHints = encodedHints;
 	}
 
-	/**
-	 * @return the logs
-	 */
-	public Set<Log> getLogs() {
-		return logs;
-	}
-
-	/**
-	 * @param logs
-	 *            the logs to set
-	 */
-	public void setLogs(Set<Log> logs) {
-		this.logs = logs;
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -326,7 +308,7 @@ public class GeoCache extends BaseResource {
 				+ placedBy + ", owner=" + owner + ", type=" + type + ", container=" + container + ", attributes="
 				+ attributes + ", difficulty=" + difficulty + ", terrain=" + terrain + ", country=" + country
 				+ ", state=" + state + ", shortDescription=" + shortDescription + ", longDescription=" + longDescription
-				+ ", encodedHints=" + encodedHints + ", logs=" + logs + "]";
+				+ ", encodedHints=" + encodedHints + "]";
 	}
 
 }

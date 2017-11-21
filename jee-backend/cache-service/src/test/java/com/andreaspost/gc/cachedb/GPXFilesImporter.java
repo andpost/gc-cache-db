@@ -50,7 +50,7 @@ public class GPXFilesImporter extends TestsBase {
 
 			for (File file : listFiles) {
 				// activate this line to start importing data
-				// doImport(file);
+				doImport(file);
 			}
 		} catch (Exception e) {
 			fail("Error accessing resources directory: " + e.getMessage());
@@ -79,6 +79,10 @@ public class GPXFilesImporter extends TestsBase {
 				for (Object object : any) {
 					Cache cache = (Cache) object;
 
+					if (!wpt.getName().equals("GCW3KG")) {
+						continue;
+					}
+
 					GeoCache geoCache = new GeoCache();
 					geoCache.setGcCode(wpt.getName());
 					geoCache.setId(cache.getId());
@@ -87,7 +91,7 @@ public class GPXFilesImporter extends TestsBase {
 					geoCache.setType(CacheType.of(cache.getType()));
 
 					if (wpt.getTime() != null) {
-						geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
+//						geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
 					}
 
 					geoCache.setPlacedBy(cache.getPlacedBy());
@@ -109,23 +113,29 @@ public class GPXFilesImporter extends TestsBase {
 						}
 					}
 
+					Response response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
+							.put("caches");
+
+					response.then().assertThat().statusCode(Status.OK.getStatusCode());
+
+					String location = response.getHeader("location");
+
 					for (Cache.Logs logs : cache.getLogs()) {
 						for (Cache.Logs.Log log : logs.getLog()) {
 							Finder finder = log.getFinder().get(0);
 							Instant instant = Instant.parse(log.getDate());
 							LocalDateTime dt = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Berlin"));
 
-							geoCache.getLogs()
-									.add(new Log(dt, LogType.of(log.getType()),
-											new User(finder.getValue(), finder.getId()),
-											log.getText().get(0).getValue(), log.getId()));
+							Log cacheLog = new Log(dt, LogType.of(log.getType()),
+									new User(finder.getValue(), finder.getId()),
+									log.getText().get(0).getValue(), log.getId());
+
+							response = given().headers(headers).contentType(CONTENT_TYPE).body(cacheLog).expect()
+									.log().all().post("caches/" + geoCache.getGcCode() + "/logs");
+
+							response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
 						}
 					}
-
-					Response response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
-							.put("cache");
-
-					response.then().assertThat().statusCode(Status.OK.getStatusCode());
 
 				}
 				// break;

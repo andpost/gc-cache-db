@@ -1,6 +1,7 @@
 package com.andreaspost.gc.cachedb.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.ejb.LocalBean;
@@ -47,7 +48,7 @@ public class GeoCacheService {
 	 * @return {@link GeoCache} if match found or null.
 	 */
 	public GeoCache getGeoCacheByGcCode(String gcCode, boolean expandDetails) {
-		GeoCacheEntity entity = persistenceService.getGeoCacheByGcCode(gcCode, expandDetails);
+		GeoCacheEntity entity = persistenceService.getGeoCacheByGcCode(gcCode, expandDetails, false);
 
 		if (entity == null) {
 			return null;
@@ -91,7 +92,7 @@ public class GeoCacheService {
 
 		GeoCacheEntity entity = geoCacheEntityConverter.encode(geoCache);
 
-		GeoCacheEntity persistentEntity = persistenceService.getGeoCacheByGcCode(geoCache.getGcCode(), true);
+		GeoCacheEntity persistentEntity = persistenceService.getGeoCacheByGcCode(geoCache.getGcCode(), true, true);
 
 		if (persistentEntity != null) {
 			mergeEntities(entity, persistentEntity);
@@ -121,6 +122,22 @@ public class GeoCacheService {
 		List<GeoCacheEntity> entityList = persistenceService.listGeoCaches(lat, lon, radius, expandDetails);
 
 		return geoCacheEntityConverter.decode(entityList);
+	}
+
+	/**
+	 * Returns logs for the geocache represented by the given gcCode.
+	 * 
+	 * @param gcCode
+	 * @return Set of logs, NULL if there is no geocache for the given gcCode.
+	 */
+	public Set<Log> listLogs(String gcCode) {
+		GeoCacheEntity entity = persistenceService.getGeoCacheByGcCode(gcCode, false, true);
+
+		if (entity == null) {
+			return null;
+		}
+
+		return logConverter.decode(entity.getLogs());
 	}
 
 	/**

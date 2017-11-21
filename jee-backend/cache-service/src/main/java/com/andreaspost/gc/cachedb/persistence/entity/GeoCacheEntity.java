@@ -1,5 +1,6 @@
 package com.andreaspost.gc.cachedb.persistence.entity;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,8 @@ public class GeoCacheEntity {
 
 	@Embedded
 	private Point coordinates;
+
+	private LocalDateTime placedAt;
 
 	private String placedBy;
 
@@ -123,6 +126,21 @@ public class GeoCacheEntity {
 	 */
 	public void setCoordinates(Point coordinates) {
 		this.coordinates = coordinates;
+	}
+
+	/**
+	 * @return the placedAt
+	 */
+	public LocalDateTime getPlacedAt() {
+		return placedAt;
+	}
+
+	/**
+	 * @param placedAt
+	 *            the placedAt to set
+	 */
+	public void setPlacedAt(LocalDateTime placedAt) {
+		this.placedAt = placedAt;
 	}
 
 	/**

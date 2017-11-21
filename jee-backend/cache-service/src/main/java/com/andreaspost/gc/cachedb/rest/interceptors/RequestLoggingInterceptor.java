@@ -22,7 +22,8 @@ public class RequestLoggingInterceptor implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		LOG.log(Level.INFO, "Incoming request: " + requestContext.getUriInfo().getRequestUri().toString());
+		LOG.log(Level.INFO, "Incoming request: " + requestContext.getMethod() + " "
+				+ requestContext.getUriInfo().getRequestUri().toString());
 
 		// TODO: some more logging?
 	}

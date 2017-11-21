@@ -51,11 +51,11 @@ public class PersistenceService {
 		return geoCache;
 	}
 
-	public GeoCacheEntity getGeoCacheByGcCode(String gcCode, boolean expandDetails) {
+	public GeoCacheEntity getGeoCacheByGcCode(String gcCode, boolean withDetails, boolean withLogs) {
 
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
 
-		if (!expandDetails) {
+		if (!withLogs) {
 			query = query.retrievedFields(false, "logs");
 		}
 
@@ -73,7 +73,7 @@ public class PersistenceService {
 	}
 
 	public boolean addLog(String gcCode, LogEntity log) {
-		GeoCacheEntity geoCache = getGeoCacheByGcCode(gcCode, false);
+		GeoCacheEntity geoCache = getGeoCacheByGcCode(gcCode, false, true);
 
 		if (geoCache == null) {
 			return false;
@@ -109,17 +109,17 @@ public class PersistenceService {
 	 * @param lat
 	 * @param lon
 	 * @param radius
-	 * @param expandDetails
+	 * @param withDetails
 	 *            If true returnes all data of the geocache.
 	 * @return
 	 */
-	public List<GeoCacheEntity> listGeoCaches(double lat, double lon, int radius, boolean expandDetails) {
+	public List<GeoCacheEntity> listGeoCaches(double lat, double lon, int radius, boolean withDetails) {
 		PointBuilder builder = PointBuilder.pointBuilder();
 		Point point = builder.latitude(lat).longitude(lon).build();
 
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
 
-		if (!expandDetails) {
+		if (!withDetails) {
 			query = query.retrievedFields(false, "logs");
 		}
 

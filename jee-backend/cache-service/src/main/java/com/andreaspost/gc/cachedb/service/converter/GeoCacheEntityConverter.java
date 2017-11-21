@@ -33,6 +33,7 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		geoCache.setDifficulty(entity.getDifficulty());
 		geoCache.setTerrain(entity.getTerrain());
 		geoCache.setCountry(entity.getCountry());
+		geoCache.setPlacedAt(entity.getPlacedAt());
 		geoCache.setPlacedBy(entity.getPlacedBy());
 		geoCache.setContainer(entity.getContainer());
 		geoCache.setState(entity.getState());
@@ -46,8 +47,6 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		if (entity.getOwner() != null) {
 			geoCache.setOwner(userConverter.decode(entity.getOwner()));
 		}
-
-		geoCache.setLogs(logConverter.decode(entity.getLogs()));
 
 		return geoCache;
 	}
@@ -67,6 +66,7 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		entity.setDifficulty(geoCache.getDifficulty());
 		entity.setTerrain(geoCache.getTerrain());
 		entity.setCountry(geoCache.getCountry());
+		entity.setPlacedAt(geoCache.getPlacedAt());
 		entity.setPlacedBy(geoCache.getPlacedBy());
 		entity.setContainer(geoCache.getContainer());
 		entity.setState(geoCache.getState());
@@ -80,8 +80,6 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		if (geoCache.getOwner() != null) {
 			entity.setOwner(userConverter.encode(geoCache.getOwner()));
 		}
-
-		entity.setLogs(logConverter.encode(geoCache.getLogs()));
 
 		return entity;
 	}

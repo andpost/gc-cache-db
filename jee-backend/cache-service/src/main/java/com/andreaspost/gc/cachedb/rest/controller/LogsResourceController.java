@@ -3,11 +3,14 @@ package com.andreaspost.gc.cachedb.rest.controller;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -29,6 +32,20 @@ public class LogsResourceController extends AbstractResourceController<Log> {
 	private String gcCode;
 
 	// TODO GET logs/id & logs/
+
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response listLogs() {
+		Set<Log> logsList = getGeoCacheService().listLogs(gcCode);
+
+		if (logsList == null) {
+			return Response.status(Status.NOT_FOUND).header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
+		}
+
+		logsList.forEach(log -> addResourceURL(log));
+
+		return Response.ok(logsList).header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
+	}
 
 	/**
 	 * Adds an answer to a given question.
