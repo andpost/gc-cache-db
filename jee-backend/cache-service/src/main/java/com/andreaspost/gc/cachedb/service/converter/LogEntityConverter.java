@@ -4,6 +4,11 @@ import com.andreaspost.gc.cachedb.persistence.entity.LogEntity;
 import com.andreaspost.gc.cachedb.rest.resource.Log;
 import com.andreaspost.gc.cachedb.rest.resource.LogType;
 
+/**
+ * Converter class for converting from {@link Log} to {@link LogEntity} and back.
+ * 
+ * @author Andreas Post
+ */
 public class LogEntityConverter extends AbstractEntityConverter<Log, LogEntity> {
 
 	private static final UserEntityConverter userConverter = new UserEntityConverter();

@@ -3,6 +3,11 @@ package com.andreaspost.gc.cachedb.service.converter;
 import com.andreaspost.gc.cachedb.persistence.entity.UserEntity;
 import com.andreaspost.gc.cachedb.rest.resource.User;
 
+/**
+ * Converter class for converting from {@link User} to {@link UserEntity} and back.
+ * 
+ * @author Andreas Post
+ */
 public class UserEntityConverter extends AbstractEntityConverter<User, UserEntity> {
 
 	/**

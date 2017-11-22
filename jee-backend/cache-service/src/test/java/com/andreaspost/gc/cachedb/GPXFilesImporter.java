@@ -79,10 +79,6 @@ public class GPXFilesImporter extends TestsBase {
 				for (Object object : any) {
 					Cache cache = (Cache) object;
 
-					if (!wpt.getName().equals("GCW3KG")) {
-						continue;
-					}
-
 					GeoCache geoCache = new GeoCache();
 					geoCache.setGcCode(wpt.getName());
 					geoCache.setId(cache.getId());
@@ -91,7 +87,7 @@ public class GPXFilesImporter extends TestsBase {
 					geoCache.setType(CacheType.of(cache.getType()));
 
 					if (wpt.getTime() != null) {
-//						geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
+						geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
 					}
 
 					geoCache.setPlacedBy(cache.getPlacedBy());
@@ -113,12 +109,16 @@ public class GPXFilesImporter extends TestsBase {
 						}
 					}
 
-					Response response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
-							.put("caches");
+					Response response = given().headers(headers).contentType(CONTENT_TYPE).expect()
+							.get("caches/" + geoCache.getGcCode());
 
-					response.then().assertThat().statusCode(Status.OK.getStatusCode());
+					// if cache does not exist, create it
+					if (response.getStatusCode() == Status.NOT_FOUND.getStatusCode()) {
+						response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
+								.post("caches");
 
-					String location = response.getHeader("location");
+						response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
+					}
 
 					for (Cache.Logs logs : cache.getLogs()) {
 						for (Cache.Logs.Log log : logs.getLog()) {
