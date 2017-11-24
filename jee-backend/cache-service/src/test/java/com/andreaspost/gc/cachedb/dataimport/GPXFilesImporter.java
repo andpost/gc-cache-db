@@ -1,4 +1,4 @@
-package com.andreaspost.gc.cachedb;
+package com.andreaspost.gc.cachedb.dataimport;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.junit.Assert.fail;
@@ -17,9 +17,11 @@ import javax.xml.bind.Unmarshaller;
 import org.geojson.Point;
 import org.junit.Test;
 
+import com.andreaspost.gc.cachedb.TestsBase;
 import com.andreaspost.gc.cachedb.rest.resource.Attribute;
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
+import com.andreaspost.gc.cachedb.rest.resource.GeoCacheDetails;
 import com.andreaspost.gc.cachedb.rest.resource.Log;
 import com.andreaspost.gc.cachedb.rest.resource.LogType;
 import com.andreaspost.gc.cachedb.rest.resource.User;
@@ -94,20 +96,25 @@ public class GPXFilesImporter extends TestsBase {
 					geoCache.setContainer(cache.getContainer());
 					geoCache.setDifficulty(Float.parseFloat(cache.getDifficulty()));
 					geoCache.setTerrain(Float.parseFloat(cache.getTerrain()));
-					geoCache.setCountry(cache.getCountry());
-					geoCache.setState(cache.getState());
 
 					Owner owner = cache.getOwner().get(0);
 					geoCache.setOwner(new User(owner.getValue(), owner.getId()));
 
-					geoCache.setShortDescription(cache.getShortDescription().get(0).getValue());
-					geoCache.setLongDescription(cache.getLongDescription().get(0).getValue());
+					GeoCacheDetails details = new GeoCacheDetails();
+
+					details.setCountry(cache.getCountry());
+					details.setState(cache.getState());
+
+					details.setShortDescription(cache.getShortDescription().get(0).getValue());
+					details.setLongDescription(cache.getLongDescription().get(0).getValue());
 
 					for (Cache.Attributes attrs : cache.getAttributes()) {
 						for (Cache.Attributes.Attribute attr : attrs.getAttribute()) {
-							geoCache.getAttributes().add(new Attribute(attr.getValue(), attr.getId()));
+							details.getAttributes().add(new Attribute(attr.getValue(), attr.getId()));
 						}
 					}
+
+					geoCache.setDetails(details);
 
 					Response response = given().headers(headers).contentType(CONTENT_TYPE).expect()
 							.get("caches/" + geoCache.getGcCode());

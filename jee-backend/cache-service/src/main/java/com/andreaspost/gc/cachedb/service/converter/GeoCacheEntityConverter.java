@@ -6,6 +6,7 @@ import org.mongodb.morphia.geo.GeoJson;
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
+import com.andreaspost.gc.cachedb.rest.resource.GeoCacheDetails;
 
 /**
  * Converts {@link GeoCacheEntity} to {@link GeoCache} and back.
@@ -16,7 +17,7 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 
 	private static final UserEntityConverter userConverter = new UserEntityConverter();
 
-	private static final LogEntityConverter logConverter = new LogEntityConverter();
+	private static final AttributesEntityConverter attributesConverter = new AttributesEntityConverter();
 
 	/**
 	 * 
@@ -32,14 +33,9 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		geoCache.setType(CacheType.of(entity.getType()));
 		geoCache.setDifficulty(entity.getDifficulty());
 		geoCache.setTerrain(entity.getTerrain());
-		geoCache.setCountry(entity.getCountry());
 		geoCache.setPlacedAt(entity.getPlacedAt());
 		geoCache.setPlacedBy(entity.getPlacedBy());
 		geoCache.setContainer(entity.getContainer());
-		geoCache.setState(entity.getState());
-		geoCache.setShortDescription(entity.getShortDescription());
-		geoCache.setLongDescription(entity.getLongDescription());
-		geoCache.setEncodedHints(entity.getEncodedHints());
 
 		geoCache.setCoordinates(
 				new Point(entity.getCoordinates().getLongitude(), entity.getCoordinates().getLatitude()));
@@ -47,6 +43,18 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		if (entity.getOwner() != null) {
 			geoCache.setOwner(userConverter.decode(entity.getOwner()));
 		}
+
+		GeoCacheDetails details = new GeoCacheDetails();
+
+		details.setCountry(entity.getCountry());
+		details.setState(entity.getState());
+		details.setShortDescription(entity.getShortDescription());
+		details.setLongDescription(entity.getLongDescription());
+		details.setEncodedHints(entity.getEncodedHints());
+
+		details.setAttributes(attributesConverter.decode(entity.getAttributes()));
+
+		geoCache.setDetails(details);
 
 		return geoCache;
 	}
@@ -65,20 +73,24 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		entity.setType(geoCache.getType().getName());
 		entity.setDifficulty(geoCache.getDifficulty());
 		entity.setTerrain(geoCache.getTerrain());
-		entity.setCountry(geoCache.getCountry());
 		entity.setPlacedAt(geoCache.getPlacedAt());
 		entity.setPlacedBy(geoCache.getPlacedBy());
 		entity.setContainer(geoCache.getContainer());
-		entity.setState(geoCache.getState());
-		entity.setShortDescription(geoCache.getShortDescription());
-		entity.setLongDescription(geoCache.getLongDescription());
-		entity.setEncodedHints(geoCache.getEncodedHints());
 
 		entity.setCoordinates(GeoJson.point(geoCache.getCoordinates().getCoordinates().getLatitude(),
 				geoCache.getCoordinates().getCoordinates().getLongitude()));
 
 		if (geoCache.getOwner() != null) {
 			entity.setOwner(userConverter.encode(geoCache.getOwner()));
+		}
+
+		if (geoCache.getDetails() != null) {
+			entity.setCountry(geoCache.getDetails().getCountry());
+			entity.setState(geoCache.getDetails().getState());
+			entity.setShortDescription(geoCache.getDetails().getShortDescription());
+			entity.setLongDescription(geoCache.getDetails().getLongDescription());
+			entity.setEncodedHints(geoCache.getDetails().getEncodedHints());
+			entity.setAttributes(attributesConverter.encode(geoCache.getDetails().getAttributes()));
 		}
 
 		return entity;

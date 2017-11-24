@@ -1,8 +1,6 @@
 package com.andreaspost.gc.cachedb.rest.resource;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.geojson.Point;
 
@@ -33,17 +31,11 @@ public class GeoCache extends BaseResource {
 	private User owner;
 	private CacheType type;
 	private String container;
-	private List<Attribute> attributes = new ArrayList<>();
+
 	private float difficulty;
 	private float terrain;
-	private String country;
-	private String state;
 
-	private String shortDescription;
-
-	private String longDescription;
-
-	private String encodedHints;
+	private GeoCacheDetails details;
 
 	public GeoCache() {
 
@@ -178,21 +170,6 @@ public class GeoCache extends BaseResource {
 	}
 
 	/**
-	 * @return the attributes
-	 */
-	public List<Attribute> getAttributes() {
-		return attributes;
-	}
-
-	/**
-	 * @param attributes
-	 *            the attributes to set
-	 */
-	public void setAttributes(List<Attribute> attributes) {
-		this.attributes = attributes;
-	}
-
-	/**
 	 * @return the difficulty
 	 */
 	public float getDifficulty() {
@@ -223,78 +200,18 @@ public class GeoCache extends BaseResource {
 	}
 
 	/**
-	 * @return the country
+	 * @return the details
 	 */
-	public String getCountry() {
-		return country;
+	public GeoCacheDetails getDetails() {
+		return details;
 	}
 
 	/**
-	 * @param country
-	 *            the country to set
+	 * @param details
+	 *            the details to set
 	 */
-	public void setCountry(String country) {
-		this.country = country;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @param state
-	 *            the state to set
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the shortDescription
-	 */
-	public String getShortDescription() {
-		return shortDescription;
-	}
-
-	/**
-	 * @param shortDescription
-	 *            the shortDescription to set
-	 */
-	public void setShortDescription(String shortDescription) {
-		this.shortDescription = shortDescription;
-	}
-
-	/**
-	 * @return the longDescription
-	 */
-	public String getLongDescription() {
-		return longDescription;
-	}
-
-	/**
-	 * @param longDescription
-	 *            the longDescription to set
-	 */
-	public void setLongDescription(String longDescription) {
-		this.longDescription = longDescription;
-	}
-
-	/**
-	 * @return the encodedHints
-	 */
-	public String getEncodedHints() {
-		return encodedHints;
-	}
-
-	/**
-	 * @param encodedHints
-	 *            the encodedHints to set
-	 */
-	public void setEncodedHints(String encodedHints) {
-		this.encodedHints = encodedHints;
+	public void setDetails(GeoCacheDetails details) {
+		this.details = details;
 	}
 
 	/*
@@ -304,11 +221,9 @@ public class GeoCache extends BaseResource {
 	 */
 	@Override
 	public String toString() {
-		return "GeoCache [gcCode=" + gcCode + ", name=" + name + ", coordinates=" + coordinates + ", placedBy="
-				+ placedBy + ", owner=" + owner + ", type=" + type + ", container=" + container + ", attributes="
-				+ attributes + ", difficulty=" + difficulty + ", terrain=" + terrain + ", country=" + country
-				+ ", state=" + state + ", shortDescription=" + shortDescription + ", longDescription=" + longDescription
-				+ ", encodedHints=" + encodedHints + "]";
+		return "GeoCache [gcCode=" + gcCode + ", name=" + name + ", coordinates=" + coordinates + ", placedAt=" + placedAt + ", placedBy=" + placedBy
+				+ ", owner=" + owner + ", type=" + type + ", container=" + container + ", difficulty=" + difficulty + ", terrain=" + terrain
+				+ ", details=" + details + ", getDetails()=" + getDetails() + ", getHref()=" + getHref() + ", getId()=" + getId() + "]";
 	}
 
 }

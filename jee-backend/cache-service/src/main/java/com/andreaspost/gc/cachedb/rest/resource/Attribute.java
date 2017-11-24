@@ -1,5 +1,10 @@
 package com.andreaspost.gc.cachedb.rest.resource;
 
+/**
+ * Class representing a geocache attribute.
+ * 
+ * @author Andreas Post
+ */
 public class Attribute {
 
 	private String name;
