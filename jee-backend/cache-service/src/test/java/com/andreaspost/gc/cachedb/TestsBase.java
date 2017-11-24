@@ -15,6 +15,7 @@ import org.geojson.Point;
 import org.junit.Before;
 
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
+import com.andreaspost.gc.cachedb.rest.resource.ContainerType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.ConnectionConfig;
@@ -114,6 +115,7 @@ public abstract class TestsBase {
 
 		cache.setCoordinates(COORDS);
 		cache.setType(CacheType.MYSTERY);
+		cache.setContainer(ContainerType.LARGE);
 
 		return cache;
 	}

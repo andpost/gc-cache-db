@@ -33,7 +33,7 @@ public class GeoCache extends BaseResource {
 
 	private User owner;
 	private CacheType type;
-	private String container;
+	private ContainerType container;
 
 	private float difficulty;
 	private float terrain;
@@ -160,7 +160,7 @@ public class GeoCache extends BaseResource {
 	/**
 	 * @return the container
 	 */
-	public String getContainer() {
+	public ContainerType getContainer() {
 		return container;
 	}
 
@@ -168,7 +168,7 @@ public class GeoCache extends BaseResource {
 	 * @param container
 	 *            the container to set
 	 */
-	public void setContainer(String container) {
+	public void setContainer(ContainerType container) {
 		this.container = container;
 	}
 

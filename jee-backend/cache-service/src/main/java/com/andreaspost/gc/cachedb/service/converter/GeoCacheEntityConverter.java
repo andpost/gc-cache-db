@@ -5,6 +5,7 @@ import org.mongodb.morphia.geo.GeoJson;
 
 import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
+import com.andreaspost.gc.cachedb.rest.resource.ContainerType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCacheDetails;
 
@@ -35,7 +36,7 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		geoCache.setTerrain(entity.getTerrain());
 		geoCache.setPlacedAt(entity.getPlacedAt());
 		geoCache.setPlacedBy(entity.getPlacedBy());
-		geoCache.setContainer(entity.getContainer());
+		geoCache.setContainer(ContainerType.of(entity.getContainer()));
 
 		geoCache.setCoordinates(
 				new Point(entity.getCoordinates().getLongitude(), entity.getCoordinates().getLatitude()));
@@ -75,7 +76,7 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		entity.setTerrain(geoCache.getTerrain());
 		entity.setPlacedAt(geoCache.getPlacedAt());
 		entity.setPlacedBy(geoCache.getPlacedBy());
-		entity.setContainer(geoCache.getContainer());
+		entity.setContainer(geoCache.getContainer().getName());
 
 		entity.setCoordinates(GeoJson.point(geoCache.getCoordinates().getCoordinates().getLatitude(),
 				geoCache.getCoordinates().getCoordinates().getLongitude()));

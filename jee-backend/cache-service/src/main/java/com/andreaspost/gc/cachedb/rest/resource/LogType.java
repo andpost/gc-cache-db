@@ -2,6 +2,11 @@ package com.andreaspost.gc.cachedb.rest.resource;
 
 import java.util.logging.Logger;
 
+/**
+ * Enum for geocaching log types.
+ * 
+ * @author Andreas Post
+ */
 public enum LogType {
 
 	ANNOUNCEMENT("Announcement"), //

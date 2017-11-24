@@ -13,6 +13,7 @@ import com.andreaspost.gc.cachedb.persistence.entity.GeoCacheEntity;
 import com.andreaspost.gc.cachedb.persistence.entity.UserEntity;
 import com.andreaspost.gc.cachedb.rest.resource.Attribute;
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
+import com.andreaspost.gc.cachedb.rest.resource.ContainerType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCacheDetails;
 import com.andreaspost.gc.cachedb.rest.resource.User;
@@ -31,7 +32,7 @@ public class GeoCacheEntityConverterTest {
 	private static final float DIFFICULTY = 3;
 	private static final float TERRAIN = 2.5f;
 	private static final String PLACED_BY = "Test Cacher";
-	private static final String CONTAINER = "Micro";
+	private static final ContainerType CONTAINER = ContainerType.MICRO;
 	private static final double LATITUDE = 51.1234;
 	private static final double LONGITUDE = 13.4567;
 	private static final String COUNTRY = "Country";
@@ -90,7 +91,7 @@ public class GeoCacheEntityConverterTest {
 		assertEquals(TERRAIN, entity.getTerrain(), 0);
 		assertEquals("Placed at must be the same.", cache.getPlacedAt(), entity.getPlacedAt());
 		assertEquals("Placed by must be the same.", PLACED_BY, entity.getPlacedBy());
-		assertEquals("Container must be the same.", CONTAINER, entity.getContainer());
+		assertEquals("Container must be the same.", CONTAINER.getName(), entity.getContainer());
 		assertEquals(LONGITUDE, entity.getCoordinates().getLongitude(), 0);
 		assertEquals(LATITUDE, entity.getCoordinates().getLatitude(), 0);
 		assertEquals("Owner name must be the same.", PLACED_BY, entity.getOwner().getName());
@@ -160,7 +161,7 @@ public class GeoCacheEntityConverterTest {
 		geoCache.setTerrain(TERRAIN);
 		geoCache.setPlacedAt(LocalDateTime.now());
 		geoCache.setPlacedBy(PLACED_BY);
-		geoCache.setContainer(CONTAINER);
+		geoCache.setContainer(CONTAINER.getName());
 		geoCache.setCoordinates(GeoJson.point(LATITUDE, LONGITUDE));
 		geoCache.setOwner(new UserEntity(PLACED_BY, USER_ID));
 

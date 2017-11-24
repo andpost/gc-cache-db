@@ -20,6 +20,7 @@ import org.junit.Test;
 import com.andreaspost.gc.cachedb.TestsBase;
 import com.andreaspost.gc.cachedb.rest.resource.Attribute;
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
+import com.andreaspost.gc.cachedb.rest.resource.ContainerType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCacheDetails;
 import com.andreaspost.gc.cachedb.rest.resource.Log;
@@ -65,7 +66,6 @@ public class GPXFilesImporter extends TestsBase {
 	 * @param file
 	 * @param category
 	 */
-	@SuppressWarnings("rawtypes")
 	private void doImport(File file) {
 		System.out.println("Start importing " + file.getName());
 
@@ -93,7 +93,7 @@ public class GPXFilesImporter extends TestsBase {
 					}
 
 					geoCache.setPlacedBy(cache.getPlacedBy());
-					geoCache.setContainer(cache.getContainer());
+					geoCache.setContainer(ContainerType.of(cache.getContainer()));
 					geoCache.setDifficulty(Float.parseFloat(cache.getDifficulty()));
 					geoCache.setTerrain(Float.parseFloat(cache.getTerrain()));
 

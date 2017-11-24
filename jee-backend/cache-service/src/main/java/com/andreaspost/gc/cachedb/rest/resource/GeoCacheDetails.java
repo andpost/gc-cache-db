@@ -3,6 +3,11 @@ package com.andreaspost.gc.cachedb.rest.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Details of a geocache.
+ * 
+ * @author Andreas Post
+ */
 public class GeoCacheDetails {
 
 	private List<Attribute> attributes = new ArrayList<>();
