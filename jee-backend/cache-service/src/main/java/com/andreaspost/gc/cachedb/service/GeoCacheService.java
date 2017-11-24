@@ -54,7 +54,13 @@ public class GeoCacheService {
 			return null;
 		}
 
-		return geoCacheEntityConverter.decode(entity);
+		GeoCache cache = geoCacheEntityConverter.decode(entity);
+
+		if (!expandDetails) {
+			cache.setDetails(null);
+		}
+
+		return cache;
 	}
 
 	/**

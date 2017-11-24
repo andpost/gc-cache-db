@@ -40,7 +40,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 
 	private static final Logger LOG = Logger.getLogger(GeoCacheResourceController.class.getName());
 
-	private static final String EXPAND_LOGS = "logs";
+	private static final String EXPAND_DETAILS = "details";
 
 	/**
 	 * Retrieves a geocache resource by gc code.
@@ -54,7 +54,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCache(@PathParam("gccode") String gcCode, @QueryParam("expand") String expand) {
 
-		GeoCache geoCache = getGeoCacheService().getGeoCacheByGcCode(gcCode, EXPAND_LOGS.equalsIgnoreCase(expand));
+		GeoCache geoCache = getGeoCacheService().getGeoCacheByGcCode(gcCode, EXPAND_DETAILS.equalsIgnoreCase(expand));
 
 		if (geoCache == null) {
 			return Response.status(Status.NOT_FOUND).header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
@@ -79,7 +79,7 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 			@QueryParam("radius") int radius, @QueryParam("expand") String expand) {
 
 		List<GeoCache> cacheList = getGeoCacheService().listGeoCaches(latitude, longitude, radius,
-				EXPAND_LOGS.equalsIgnoreCase(expand));
+				EXPAND_DETAILS.equalsIgnoreCase(expand));
 
 		cacheList.stream().forEach(c -> addResourceURL(c));
 

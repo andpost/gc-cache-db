@@ -6,6 +6,8 @@ import org.geojson.Point;
 
 import com.andreaspost.gc.cachedb.rest.converter.LocalDateTimeDeserializer;
 import com.andreaspost.gc.cachedb.rest.converter.LocalDateTimeSerializer;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
  * 
  * @author Andreas Post
  */
+@JsonInclude(Include.NON_NULL)
 public class GeoCache extends BaseResource {
 
 	private String gcCode;

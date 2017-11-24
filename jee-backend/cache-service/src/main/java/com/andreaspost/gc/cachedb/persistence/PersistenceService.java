@@ -55,6 +55,15 @@ public class PersistenceService {
 
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
 
+		if (!withDetails) {
+			query = query.project("country", false);
+			query = query.project("state", false);
+			query = query.project("shortDescription", false);
+			query = query.project("longDescription", false);
+			query = query.project("encodedHints", false);
+			query = query.project("attributes", false);
+		}
+
 		if (!withLogs) {
 			query = query.retrievedFields(false, "logs");
 		}
