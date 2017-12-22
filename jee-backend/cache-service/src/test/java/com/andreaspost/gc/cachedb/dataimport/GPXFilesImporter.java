@@ -73,10 +73,6 @@ public class GPXFilesImporter extends TestsBase {
 	private void doImport(File file) {
 		System.out.println("Start importing " + file.getName());
 
-		if (!file.getName().equalsIgnoreCase("taupan_gsak-enhanced.gpx")) {
-			return;
-		}
-
 		try {
 			JAXBContext jc10 = JAXBContext.newInstance(Gpx.class, WptExtension.class, Cache.class);
 			Unmarshaller unmarshaller = jc10.createUnmarshaller();
