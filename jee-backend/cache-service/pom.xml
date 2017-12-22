@@ -244,12 +244,15 @@
 				<version>1.5</version>
 				<executions>
 					<execution>
+						<phase>generate-test-sources</phase>
 						<goals>
-							<goal>xjc</goal>
+							<goal>testXjc</goal>
 						</goals>
 					</execution>
 				</executions>
 				<configuration>
+<!-- 					<schemaDirectory>src/test/xsd</schemaDirectory> -->
+<!-- 					<generateDirectory>target/generated-test-sources</generateDirectory> -->
                    <!-- The name of your generated source package -->
                 	<!-- <arguments>-extension -npa -b ${project.basedir}/src/main/xsd/global.xjb</arguments>  -->
                 </configuration>
