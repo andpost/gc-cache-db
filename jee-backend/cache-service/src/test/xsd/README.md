@@ -1,12 +1,12 @@
-# For importing GPX files, place the following XSD files in this directory and run mvn jaxb2:testXjc
+## For importing GPX files, place the following XSD files in this directory and run mvn jaxb2:testXjc
 
-## Basic gpx schema
+### Basic gpx schema
 http://www.topografix.com/gpx/1/0/gpx.xsd
 
-## Groundspeak cache extension
+### Groundspeak cache extension
 http://www.groundspeak.com/cache/1/0/1/cache.xsd
 
-## GSAK extension
+### GSAK extension
 http://www.gsak.net/xmlv1/6/gsak.xsd
 
 To generate sources from gsak schema that will be recognized by JAXBContext, you have to alter the file as follows:
