@@ -62,6 +62,16 @@ public class GeoCacheEntity {
 	private String id;
 
 	@Embedded
+	private Point originalCoordinates;
+
+	@Embedded
+	private UserEntity reviewer;
+
+	private String personalNote;
+
+	private Integer favPoints;
+
+	@Embedded
 	private Set<LogEntity> logs = new TreeSet<>();
 
 	public GeoCacheEntity() {
@@ -351,5 +361,80 @@ public class GeoCacheEntity {
 	 */
 	public void setLogs(Set<LogEntity> logs) {
 		this.logs = logs;
+	}
+
+	/**
+	 * @return the originalCoordinates
+	 */
+	public Point getOriginalCoordinates() {
+		return originalCoordinates;
+	}
+
+	/**
+	 * @param originalCoordinates
+	 *            the originalCoordinates to set
+	 */
+	public void setOriginalCoordinates(Point originalCoordinates) {
+		this.originalCoordinates = originalCoordinates;
+	}
+
+	/**
+	 * @return the reviewer
+	 */
+	public UserEntity getReviewer() {
+		return reviewer;
+	}
+
+	/**
+	 * @param reviewer
+	 *            the reviewer to set
+	 */
+	public void setReviewer(UserEntity reviewer) {
+		this.reviewer = reviewer;
+	}
+
+	/**
+	 * @return the personalNote
+	 */
+	public String getPersonalNote() {
+		return personalNote;
+	}
+
+	/**
+	 * @param personalNote
+	 *            the personalNote to set
+	 */
+	public void setPersonalNote(String personalNote) {
+		this.personalNote = personalNote;
+	}
+
+	/**
+	 * @return the favPoints
+	 */
+	public Integer getFavPoints() {
+		return favPoints;
+	}
+
+	/**
+	 * @param favPoints
+	 *            the favPoints to set
+	 */
+	public void setFavPoints(Integer favPoints) {
+		this.favPoints = favPoints;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		return "GeoCacheEntity [objectId=" + objectId + ", gcCode=" + gcCode + ", name=" + name + ", coordinates=" + coordinates + ", placedAt="
+				+ placedAt + ", placedBy=" + placedBy + ", owner=" + owner + ", type=" + type + ", container=" + container + ", attributes="
+				+ attributes + ", difficulty=" + difficulty + ", terrain=" + terrain + ", country=" + country + ", state=" + state
+				+ ", shortDescription=" + shortDescription + ", longDescription=" + longDescription + ", encodedHints=" + encodedHints + ", id=" + id
+				+ ", originalCoordinates=" + originalCoordinates + ", reviewer=" + reviewer + ", personalNote=" + personalNote + ", favPoints="
+				+ favPoints + ", logs=" + logs + "]";
 	}
 }

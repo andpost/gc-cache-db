@@ -35,6 +35,8 @@ public class GeoCacheEntityConverterTest {
 	private static final ContainerType CONTAINER = ContainerType.MICRO;
 	private static final double LATITUDE = 51.1234;
 	private static final double LONGITUDE = 13.4567;
+	private static final double ORIG_LATITUDE = 51.4321;
+	private static final double ORIG_LONGITUDE = 13.76547;
 	private static final String COUNTRY = "Country";
 	private static final String STATE = "State";
 	private static final String SHORT_DESC = "Short Desc";
@@ -44,6 +46,8 @@ public class GeoCacheEntityConverterTest {
 	private static final String ATTRIBUTE_1_ID = "8";
 	private static final String ATTRIBUTE_2_NAME = "Takes less than an hour";
 	private static final String ATTRIBUTE_2_ID = "7";
+	private static final String PERSONAL_NOTE = "Solution note";
+	private static final Integer FAV_POINTS = Integer.valueOf(99);
 
 	@Test
 	public void decodeTest() {
@@ -69,6 +73,11 @@ public class GeoCacheEntityConverterTest {
 		assertEquals("Short description must be the same.", SHORT_DESC, cache.getDetails().getShortDescription());
 		assertEquals("Long description must be the same.", LONG_DESC, cache.getDetails().getLongDescription());
 		assertEquals("Hints must be the same.", HINTS, cache.getDetails().getEncodedHints());
+		assertEquals("Personal Note must be the same.", PERSONAL_NOTE, cache.getDetails().getPersonalNote());
+		assertEquals("FavPoints must be the same.", FAV_POINTS, cache.getDetails().getFavPoints());
+
+		assertEquals(ORIG_LONGITUDE, cache.getDetails().getOriginalCoordinates().getCoordinates().getLongitude(), 0);
+		assertEquals(ORIG_LATITUDE, cache.getDetails().getOriginalCoordinates().getCoordinates().getLatitude(), 0);
 
 		assertEquals("Attributes size must be the same.", entity.getAttributes().size(), cache.getDetails().getAttributes().size());
 		assertEquals("Attributes size must be the same.", ATTRIBUTE_1_NAME, cache.getDetails().getAttributes().get(0).getName());
@@ -101,6 +110,11 @@ public class GeoCacheEntityConverterTest {
 		assertEquals("Short description must be the same.", SHORT_DESC, entity.getShortDescription());
 		assertEquals("Long description must be the same.", LONG_DESC, entity.getLongDescription());
 		assertEquals("Hints must be the same.", HINTS, entity.getEncodedHints());
+		assertEquals("Personal Note must be the same.", PERSONAL_NOTE, entity.getPersonalNote());
+		assertEquals("FavPoints must be the same.", FAV_POINTS, entity.getFavPoints());
+
+		assertEquals(ORIG_LONGITUDE, entity.getOriginalCoordinates().getLongitude(), 0);
+		assertEquals(ORIG_LATITUDE, entity.getOriginalCoordinates().getLatitude(), 0);
 
 		assertEquals("Attributes size must be the same.", cache.getDetails().getAttributes().size(), entity.getAttributes().size());
 		assertEquals("Attributes size must be the same.", ATTRIBUTE_1_NAME, entity.getAttributes().get(0).getName());
@@ -136,9 +150,13 @@ public class GeoCacheEntityConverterTest {
 		details.setShortDescription(SHORT_DESC);
 		details.setLongDescription(LONG_DESC);
 		details.setEncodedHints(HINTS);
+		details.setPersonalNote(PERSONAL_NOTE);
+		details.setFavPoints(FAV_POINTS);
 
 		details.getAttributes().add(new Attribute(ATTRIBUTE_1_NAME, ATTRIBUTE_1_ID));
 		details.getAttributes().add(new Attribute(ATTRIBUTE_2_NAME, ATTRIBUTE_2_ID));
+
+		details.setOriginalCoordinates(new Point(ORIG_LONGITUDE, ORIG_LATITUDE));
 
 		geoCache.setDetails(details);
 
@@ -170,9 +188,13 @@ public class GeoCacheEntityConverterTest {
 		geoCache.setShortDescription(SHORT_DESC);
 		geoCache.setLongDescription(LONG_DESC);
 		geoCache.setEncodedHints(HINTS);
+		geoCache.setPersonalNote(PERSONAL_NOTE);
+		geoCache.setFavPoints(FAV_POINTS);
 
 		geoCache.getAttributes().add(new AttributeEntity(ATTRIBUTE_1_NAME, ATTRIBUTE_1_ID));
 		geoCache.getAttributes().add(new AttributeEntity(ATTRIBUTE_2_NAME, ATTRIBUTE_2_ID));
+
+		geoCache.setOriginalCoordinates(GeoJson.point(ORIG_LATITUDE, ORIG_LONGITUDE));
 
 		return geoCache;
 	}

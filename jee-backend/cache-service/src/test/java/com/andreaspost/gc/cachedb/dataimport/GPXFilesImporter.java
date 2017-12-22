@@ -7,7 +7,9 @@ import java.io.File;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ws.rs.core.Response.Status;
@@ -32,6 +34,8 @@ import com.groundspeak.cache._1._0._1.Cache.Owner;
 import com.jayway.restassured.response.Response;
 import com.topografix.gpx._1._0.Gpx;
 import com.topografix.gpx._1._0.Gpx.Wpt;
+
+import net.gsak.xmlv1._6.WptExtension;
 
 /**
  * Test class used for importing geocaching.com GPX files and importing them
@@ -69,90 +73,127 @@ public class GPXFilesImporter extends TestsBase {
 	private void doImport(File file) {
 		System.out.println("Start importing " + file.getName());
 
+		if (!file.getName().equalsIgnoreCase("taupan_gsak-enhanced.gpx")) {
+			return;
+		}
+
 		try {
-			JAXBContext jc10 = JAXBContext.newInstance(Gpx.class, Cache.class);
+			JAXBContext jc10 = JAXBContext.newInstance(Gpx.class, WptExtension.class, Cache.class);
 			Unmarshaller unmarshaller = jc10.createUnmarshaller();
 
 			Gpx gpx = (Gpx) unmarshaller.unmarshal(file);
 			List<Wpt> wptList = gpx.getWpt();
 
 			for (Wpt wpt : wptList) {
+				// currently our API only supports Geocache waypoints
+				if (!wpt.getName().startsWith("GC")) {
+					continue;
+				}
+				GeoCache geoCache = new GeoCache();
+				geoCache.setDetails(new GeoCacheDetails());
+
+				List<Log> logs = new ArrayList<>();
+
+				geoCache.setGcCode(wpt.getName());
+				geoCache.setCoordinates(new Point(wpt.getLon().doubleValue(), wpt.getLat().doubleValue()));
+				if (wpt.getTime() != null) {
+					geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
+				}
+
 				List<Object> any = wpt.getAny();
 				for (Object object : any) {
-					Cache cache = (Cache) object;
-
-					GeoCache geoCache = new GeoCache();
-					geoCache.setGcCode(wpt.getName());
-					geoCache.setId(cache.getId());
-					geoCache.setName(cache.getName());
-					geoCache.setCoordinates(new Point(wpt.getLon().doubleValue(), wpt.getLat().doubleValue()));
-					geoCache.setType(CacheType.of(cache.getType()));
-
-					if (wpt.getTime() != null) {
-						geoCache.setPlacedAt(wpt.getTime().toGregorianCalendar().toZonedDateTime().toLocalDateTime());
+					if (object instanceof Cache) {
+						fillBasicData(geoCache, (Cache) object);
+						fillLogData(logs, (Cache) object);
 					}
 
-					geoCache.setPlacedBy(cache.getPlacedBy());
-					geoCache.setContainer(ContainerType.of(cache.getContainer()));
-					geoCache.setDifficulty(Float.parseFloat(cache.getDifficulty()));
-					geoCache.setTerrain(Float.parseFloat(cache.getTerrain()));
-
-					Owner owner = cache.getOwner().get(0);
-					geoCache.setOwner(new User(owner.getValue(), owner.getId()));
-
-					GeoCacheDetails details = new GeoCacheDetails();
-
-					details.setCountry(cache.getCountry());
-					details.setState(cache.getState());
-
-					details.setShortDescription(cache.getShortDescription().get(0).getValue());
-					details.setLongDescription(cache.getLongDescription().get(0).getValue());
-
-					for (Cache.Attributes attrs : cache.getAttributes()) {
-						for (Cache.Attributes.Attribute attr : attrs.getAttribute()) {
-							details.getAttributes().add(new Attribute(attr.getValue(), attr.getId()));
-						}
+					if (object instanceof WptExtension) {
+						fillAdditionalData(geoCache, (WptExtension) object);
 					}
-
-					geoCache.setDetails(details);
-
-					Response response = given().headers(headers).contentType(CONTENT_TYPE).expect()
-							.get("caches/" + geoCache.getGcCode());
-
-					// if cache does not exist, create it
-					if (response.getStatusCode() == Status.NOT_FOUND.getStatusCode()) {
-						response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
-								.post("caches");
-
-						response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
-					}
-
-					for (Cache.Logs logs : cache.getLogs()) {
-						for (Cache.Logs.Log log : logs.getLog()) {
-							Finder finder = log.getFinder().get(0);
-							Instant instant = Instant.parse(log.getDate());
-							LocalDateTime dt = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Berlin"));
-
-							Log cacheLog = new Log(dt, LogType.of(log.getType()),
-									new User(finder.getValue(), finder.getId()),
-									log.getText().get(0).getValue(), log.getId());
-
-							response = given().headers(headers).contentType(CONTENT_TYPE).body(cacheLog).expect()
-									.log().all().post("caches/" + geoCache.getGcCode() + "/logs");
-
-							response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
-						}
-					}
-
 				}
+
+				Response response = given().headers(headers).contentType(CONTENT_TYPE).expect()
+						.get("caches/" + geoCache.getGcCode());
+
+				// if cache does not exist, create it
+				if (response.getStatusCode() == Status.NOT_FOUND.getStatusCode()) {
+					response = given().headers(headers).contentType(CONTENT_TYPE).body(geoCache).expect()
+							.post("caches");
+
+					response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
+				}
+
+				for (Log log : logs) {
+					response = given().headers(headers).contentType(CONTENT_TYPE).body(log).expect()
+							.log().all().post("caches/" + geoCache.getGcCode() + "/logs");
+
+					response.then().assertThat().statusCode(Status.CREATED.getStatusCode());
+				}
+
 				// break;
 			}
 			// Thread.sleep(5);
 
 			System.out.println("Imported " + wptList.size() + " Geocaches from " + file.getName());
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new IllegalStateException("Error accessing file: " + file, e);
+			LOG.log(Level.SEVERE, "Error processing file: " + file, e);
+			throw new IllegalStateException("Error processing file: " + file, e);
+		}
+	}
+
+	private void fillBasicData(GeoCache geoCache, Cache cache) {
+		geoCache.setId(cache.getId());
+		geoCache.setName(cache.getName());
+		geoCache.setType(CacheType.of(cache.getType()));
+
+		geoCache.setPlacedBy(cache.getPlacedBy());
+		geoCache.setContainer(ContainerType.of(cache.getContainer()));
+		geoCache.setDifficulty(Float.parseFloat(cache.getDifficulty()));
+		geoCache.setTerrain(Float.parseFloat(cache.getTerrain()));
+
+		Owner owner = cache.getOwner().get(0);
+		geoCache.setOwner(new User(owner.getValue(), owner.getId()));
+
+		geoCache.getDetails().setCountry(cache.getCountry());
+		geoCache.getDetails().setState(cache.getState());
+
+		geoCache.getDetails().setShortDescription(cache.getShortDescription().get(0).getValue());
+		geoCache.getDetails().setLongDescription(cache.getLongDescription().get(0).getValue());
+
+		for (Cache.Attributes attrs : cache.getAttributes()) {
+			for (Cache.Attributes.Attribute attr : attrs.getAttribute()) {
+				geoCache.getDetails().getAttributes().add(new Attribute(attr.getValue(), attr.getId()));
+			}
+		}
+	}
+
+	private void fillAdditionalData(GeoCache geoCache, WptExtension wptExtension) {
+		if (wptExtension.getLonBeforeCorrect() != null && wptExtension.getLatBeforeCorrect() != null) {
+			geoCache.getDetails().setOriginalCoordinates(
+					new Point(Double.valueOf(wptExtension.getLonBeforeCorrect()),
+							Double.valueOf(wptExtension.getLatBeforeCorrect())));
+		}
+
+		geoCache.getDetails().setPersonalNote(wptExtension.getGcNote());
+
+		if (wptExtension.getFavPoints() != null) {
+			geoCache.getDetails().setFavPoints(wptExtension.getFavPoints().intValue());
+		}
+	}
+
+	private void fillLogData(List<Log> logs, Cache cache) {
+		for (Cache.Logs cacheLogs : cache.getLogs()) {
+			for (Cache.Logs.Log log : cacheLogs.getLog()) {
+				Finder finder = log.getFinder().get(0);
+				Instant instant = Instant.parse(log.getDate());
+				LocalDateTime dt = LocalDateTime.ofInstant(instant, ZoneId.of("Europe/Berlin"));
+
+				Log cacheLog = new Log(dt, LogType.of(log.getType()),
+						new User(finder.getValue(), finder.getId()),
+						log.getText().get(0).getValue(), log.getId());
+
+				logs.add(cacheLog);
+			}
 		}
 	}
 }

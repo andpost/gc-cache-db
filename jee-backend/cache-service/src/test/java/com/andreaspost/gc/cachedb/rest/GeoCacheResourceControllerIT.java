@@ -59,6 +59,7 @@ public class GeoCacheResourceControllerIT extends TestsBase {
 			fail(e.getMessage());
 		}
 
+		// TODO more asserts
 		assertEquals("GC Code must be the same.", GC_CODE, responseCache.getGcCode());
 
 		// 3. Delete

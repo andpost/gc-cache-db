@@ -17,6 +17,7 @@ import org.junit.Before;
 import com.andreaspost.gc.cachedb.rest.resource.CacheType;
 import com.andreaspost.gc.cachedb.rest.resource.ContainerType;
 import com.andreaspost.gc.cachedb.rest.resource.GeoCache;
+import com.andreaspost.gc.cachedb.rest.resource.GeoCacheDetails;
 import com.jayway.restassured.RestAssured;
 import com.jayway.restassured.config.ConnectionConfig;
 import com.jayway.restassured.response.Header;
@@ -116,6 +117,10 @@ public abstract class TestsBase {
 		cache.setCoordinates(COORDS);
 		cache.setType(CacheType.MYSTERY);
 		cache.setContainer(ContainerType.LARGE);
+
+		GeoCacheDetails details = new GeoCacheDetails();
+		details.setFavPoints(Integer.valueOf(99));
+		cache.setDetails(details);
 
 		return cache;
 	}

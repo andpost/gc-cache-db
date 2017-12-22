@@ -62,6 +62,10 @@ public class PersistenceService {
 			query = query.project("longDescription", false);
 			query = query.project("encodedHints", false);
 			query = query.project("attributes", false);
+			query = query.project("originalCoordinates", false);
+			query = query.project("reviewer", false);
+			query = query.project("personalNote", false);
+			query = query.project("favPoints", false);
 		}
 
 		if (!withLogs) {

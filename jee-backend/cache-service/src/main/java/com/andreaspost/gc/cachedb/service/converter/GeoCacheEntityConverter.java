@@ -52,8 +52,18 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 		details.setShortDescription(entity.getShortDescription());
 		details.setLongDescription(entity.getLongDescription());
 		details.setEncodedHints(entity.getEncodedHints());
+		details.setPersonalNote(entity.getPersonalNote());
+		details.setFavPoints(entity.getFavPoints());
 
 		details.setAttributes(attributesConverter.decode(entity.getAttributes()));
+
+		if (entity.getReviewer() != null) {
+			details.setReviewer(userConverter.decode(entity.getReviewer()));
+		}
+		if (entity.getOriginalCoordinates() != null) {
+			details.setOriginalCoordinates(
+					new Point(entity.getOriginalCoordinates().getLongitude(), entity.getOriginalCoordinates().getLatitude()));
+		}
 
 		geoCache.setDetails(details);
 
@@ -91,7 +101,20 @@ public class GeoCacheEntityConverter extends AbstractEntityConverter<GeoCache, G
 			entity.setShortDescription(geoCache.getDetails().getShortDescription());
 			entity.setLongDescription(geoCache.getDetails().getLongDescription());
 			entity.setEncodedHints(geoCache.getDetails().getEncodedHints());
+			entity.setPersonalNote(geoCache.getDetails().getPersonalNote());
+			entity.setFavPoints(geoCache.getDetails().getFavPoints());
+
 			entity.setAttributes(attributesConverter.encode(geoCache.getDetails().getAttributes()));
+
+			if (geoCache.getDetails().getReviewer() != null) {
+				entity.setReviewer(userConverter.encode(geoCache.getDetails().getReviewer()));
+			}
+
+			if (geoCache.getDetails().getOriginalCoordinates() != null) {
+				entity.setOriginalCoordinates(GeoJson.point(geoCache.getDetails().getOriginalCoordinates().getCoordinates().getLatitude(),
+						geoCache.getDetails().getOriginalCoordinates().getCoordinates().getLongitude()));
+			}
+
 		}
 
 		return entity;

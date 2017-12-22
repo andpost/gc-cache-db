@@ -3,6 +3,8 @@ package com.andreaspost.gc.cachedb.rest.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.geojson.Point;
+
 /**
  * Details of a geocache.
  * 
@@ -21,6 +23,14 @@ public class GeoCacheDetails {
 	private String longDescription;
 
 	private String encodedHints;
+
+	private Point originalCoordinates;
+
+	private User reviewer;
+
+	private String personalNote;
+
+	private Integer favPoints;
 
 	/**
 	 * @return the attributes
@@ -112,6 +122,66 @@ public class GeoCacheDetails {
 		this.encodedHints = encodedHints;
 	}
 
+	/**
+	 * @return the originalCoordinates
+	 */
+	public Point getOriginalCoordinates() {
+		return originalCoordinates;
+	}
+
+	/**
+	 * @param originalCoordinates
+	 *            the originalCoordinates to set
+	 */
+	public void setOriginalCoordinates(Point originalCoordinates) {
+		this.originalCoordinates = originalCoordinates;
+	}
+
+	/**
+	 * @return the reviewer
+	 */
+	public User getReviewer() {
+		return reviewer;
+	}
+
+	/**
+	 * @param reviewer
+	 *            the reviewer to set
+	 */
+	public void setReviewer(User reviewer) {
+		this.reviewer = reviewer;
+	}
+
+	/**
+	 * @return the personalNote
+	 */
+	public String getPersonalNote() {
+		return personalNote;
+	}
+
+	/**
+	 * @param personalNote
+	 *            the personalNote to set
+	 */
+	public void setPersonalNote(String personalNote) {
+		this.personalNote = personalNote;
+	}
+
+	/**
+	 * @return the favPoints
+	 */
+	public Integer getFavPoints() {
+		return favPoints;
+	}
+
+	/**
+	 * @param favPoints
+	 *            the favPoints to set
+	 */
+	public void setFavPoints(Integer favPoints) {
+		this.favPoints = favPoints;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -120,6 +190,8 @@ public class GeoCacheDetails {
 	@Override
 	public String toString() {
 		return "GeoCacheDetails [attributes=" + attributes + ", country=" + country + ", state=" + state + ", shortDescription=" + shortDescription
-				+ ", longDescription=" + longDescription + ", encodedHints=" + encodedHints + "]";
+				+ ", longDescription=" + longDescription + ", encodedHints=" + encodedHints + ", originalCoordinates=" + originalCoordinates
+				+ ", reviewer=" + reviewer + ", personalNote=" + personalNote + ", favPoints=" + favPoints + "]";
 	}
+
 }

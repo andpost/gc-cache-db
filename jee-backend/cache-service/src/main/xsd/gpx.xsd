@@ -2,11 +2,7 @@
 <!-- GPX.xsd version 1.0 - For more information on GPX and this schema, visit http://www.topografix.com/gpx.asp -->
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
   xmlns:gpx="http://www.topografix.com/GPX/1/0"
-  xmlns:groundspeak="http://www.groundspeak.com/cache/1/0/1/cache.xsd"
   targetNamespace="http://www.topografix.com/GPX/1/0" elementFormDefault="qualified">
-			
-  <xsd:import schemaLocation="cache.xsd"  
-     namespace="http://www.groundspeak.com/cache/1/0/1" />
 
 <!-- Main GPX definition -->
 
