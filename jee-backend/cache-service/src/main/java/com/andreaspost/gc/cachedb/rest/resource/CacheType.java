@@ -18,6 +18,7 @@ public enum CacheType {
 	MEGA_EVENT("Mega-Event Cache"), //
 	LNF_EVENT("Lost and Found Event Cache"), //
 	GIGA_EVENT("Giga-Event Cache"), //
+	// TODO Geocaching HQ Cache, LAB Cache, APE, Reverse
 	UNDEFINED("Undefined");
 
 	private static final Logger LOG = Logger.getLogger(CacheType.class.getName());

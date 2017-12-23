@@ -51,6 +51,16 @@ public class PersistenceService {
 		return geoCache;
 	}
 
+	/**
+	 * Returns a {@link GeoCacheEntity} by given gcCode.
+	 * 
+	 * @param gcCode
+	 * @param withDetails
+	 *            If true, returns more details.
+	 * @param withLogs
+	 *            If true, returns available logs.
+	 * @return
+	 */
 	public GeoCacheEntity getGeoCacheByGcCode(String gcCode, boolean withDetails, boolean withLogs) {
 
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
@@ -69,20 +79,10 @@ public class PersistenceService {
 		}
 
 		if (!withLogs) {
-			query = query.retrievedFields(false, "logs");
+			query = query.project("logs", false);
 		}
 
 		return query.field("gcCode").equal(gcCode).get();
-
-		// if (!expandDetails) {
-		// return
-		// mongoDBClientProvider.getDatastore().find(GeoCacheEntity.class,
-		// Mapper.ID_KEY, id)
-		// .retrievedFields(false, "details").get();
-		// } else {
-		// return mongoDBClientProvider.getDatastore().get(GeoCacheEntity.class,
-		// id);
-		// }
 	}
 
 	public boolean addLog(String gcCode, LogEntity log) {
@@ -133,8 +133,20 @@ public class PersistenceService {
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
 
 		if (!withDetails) {
-			query = query.retrievedFields(false, "logs");
+			query = query.project("country", false);
+			query = query.project("state", false);
+			query = query.project("shortDescription", false);
+			query = query.project("longDescription", false);
+			query = query.project("encodedHints", false);
+			query = query.project("attributes", false);
+			query = query.project("originalCoordinates", false);
+			query = query.project("reviewer", false);
+			query = query.project("personalNote", false);
+			query = query.project("favPoints", false);
 		}
+
+		// TODO enable logs in lists
+		query = query.project("logs", false);
 
 		return query.field("coordinates").near(point, radius).asList();
 	}
