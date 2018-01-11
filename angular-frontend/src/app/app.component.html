@@ -5,8 +5,14 @@
 <agm-map [latitude]="lat" [longitude]="lng" [zoom]="zoom"
          (centerChange)="processCenterChange($event)" (mouseup)="doQuery()"
          (zoomChange)="processZoomChange($event)">
-  <agm-marker *ngFor="let geoCache of geoCacheList" 
-          [latitude]=geoCache.coordinates.coordinates[1] 
-          [longitude]=geoCache.coordinates.coordinates[0]
-          [iconUrl]=getIconUrl(geoCache.type)></agm-marker>
+  <!--<agm-marker-cluster [imagePath]="'https://googlemaps.github.io/js-marker-clusterer/images/m1.png'">-->
+    <agm-marker *ngFor="let geoCache of geoCacheList" 
+            [latitude]=geoCache.coordinates.coordinates[1] 
+            [longitude]=geoCache.coordinates.coordinates[0]
+            [iconUrl]=getIconUrl(geoCache.type)>
+      <agm-info-window>
+        <p [innerHTML]="geoCache.gcCode"></p>
+      </agm-info-window>
+    </agm-marker>
+  <!--</agm-marker-cluster>-->
 </agm-map>
