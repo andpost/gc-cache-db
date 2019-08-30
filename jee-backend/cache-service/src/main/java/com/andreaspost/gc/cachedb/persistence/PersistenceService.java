@@ -30,6 +30,9 @@ public class PersistenceService {
 
 	private static final Logger LOG = Logger.getLogger(PersistenceService.class.getName());
 
+	private static final String[] CACHE_DETAILS = new String[] { "country", "state", "shortDescription", "longDescription", "encodedHints",
+			"attributes", "originalCoordinates", "reviewer", "personalNote", "favPoints" };
+
 	@Inject
 	MongoDBClientProvider mongoDBClientProvider;
 
@@ -66,16 +69,9 @@ public class PersistenceService {
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
 
 		if (!withDetails) {
-			query = query.project("country", false);
-			query = query.project("state", false);
-			query = query.project("shortDescription", false);
-			query = query.project("longDescription", false);
-			query = query.project("encodedHints", false);
-			query = query.project("attributes", false);
-			query = query.project("originalCoordinates", false);
-			query = query.project("reviewer", false);
-			query = query.project("personalNote", false);
-			query = query.project("favPoints", false);
+			for (String detail : CACHE_DETAILS) {
+				query = query.project(detail, false);
+			}
 		}
 
 		if (!withLogs) {
@@ -126,23 +122,16 @@ public class PersistenceService {
 	 *            If true returnes all data of the geocache.
 	 * @return
 	 */
-	public List<GeoCacheEntity> listGeoCaches(double lat, double lon, int radius, boolean withDetails) {
+	public List<GeoCacheEntity> listGeoCaches(double lat, double lon, int radius, boolean withDetails, boolean withLogs) {
 		PointBuilder builder = PointBuilder.pointBuilder();
 		Point point = builder.latitude(lat).longitude(lon).build();
 
 		Query<GeoCacheEntity> query = mongoDBClientProvider.getDatastore().createQuery(GeoCacheEntity.class);
 
 		if (!withDetails) {
-			query = query.project("country", false);
-			query = query.project("state", false);
-			query = query.project("shortDescription", false);
-			query = query.project("longDescription", false);
-			query = query.project("encodedHints", false);
-			query = query.project("attributes", false);
-			query = query.project("originalCoordinates", false);
-			query = query.project("reviewer", false);
-			query = query.project("personalNote", false);
-			query = query.project("favPoints", false);
+			for (String detail : CACHE_DETAILS) {
+				query = query.project(detail, false);
+			}
 		}
 
 		// TODO enable logs in lists

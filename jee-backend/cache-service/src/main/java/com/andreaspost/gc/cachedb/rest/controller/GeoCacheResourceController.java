@@ -42,6 +42,8 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 
 	private static final String EXPAND_DETAILS = "details";
 
+	private static final String EXPAND_LOGS = "logs";
+
 	/**
 	 * Retrieves a geocache resource by gc code.
 	 * 
@@ -53,8 +55,9 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 	@Path("{gccode}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getCache(@PathParam("gccode") String gcCode, @QueryParam("expand") String expand) {
+		boolean expandDetails = hasExpandParamDetails(expand, EXPAND_DETAILS);
 
-		GeoCache geoCache = getGeoCacheService().getGeoCacheByGcCode(gcCode, EXPAND_DETAILS.equalsIgnoreCase(expand));
+		GeoCache geoCache = getGeoCacheService().getGeoCacheByGcCode(gcCode, expandDetails);
 
 		if (geoCache == null) {
 			return Response.status(Status.NOT_FOUND).header(HttpHeaders.CONTENT_ENCODING, StandardCharsets.UTF_8).build();
@@ -77,9 +80,10 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response listGeoCaches(@QueryParam("lat") double latitude, @QueryParam("lon") double longitude,
 			@QueryParam("radius") int radius, @QueryParam("expand") String expand) {
+		boolean expandDetails = hasExpandParamDetails(expand, EXPAND_DETAILS);
 
 		List<GeoCache> cacheList = getGeoCacheService().listGeoCaches(latitude, longitude, radius,
-				EXPAND_DETAILS.equalsIgnoreCase(expand));
+				expandDetails);
 
 		cacheList.stream().forEach(c -> addResourceURL(c));
 
@@ -145,4 +149,25 @@ public class GeoCacheResourceController extends AbstractResourceController<GeoCa
 		return resource.getGcCode();
 	}
 
+	/**
+	 * Returns true if the queryParam contains the expandOption.
+	 * 
+	 * The queryParam must be a single option or comma separated list of options.
+	 * 
+	 * @param queryParam
+	 * @param expandOption
+	 * @return
+	 */
+	private boolean hasExpandParamDetails(final String queryParam, final String expandOption) {
+		if (queryParam != null) {
+			String[] expandParts = queryParam.split(",");
+
+			for (String expPart : expandParts) {
+				if (expandOption.equalsIgnoreCase(expPart.trim())) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }

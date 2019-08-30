@@ -125,7 +125,7 @@ public class GeoCacheService {
 	 * @return
 	 */
 	public List<GeoCache> listGeoCaches(double lat, double lon, int radius, boolean expandDetails) {
-		List<GeoCacheEntity> entityList = persistenceService.listGeoCaches(lat, lon, radius, expandDetails);
+		List<GeoCacheEntity> entityList = persistenceService.listGeoCaches(lat, lon, radius, expandDetails, false);
 
 		return geoCacheEntityConverter.decode(entityList);
 	}
