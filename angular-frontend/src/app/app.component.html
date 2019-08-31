@@ -9,9 +9,10 @@
     <agm-marker *ngFor="let geoCache of geoCacheList" 
             [latitude]=geoCache.coordinates.coordinates[1] 
             [longitude]=geoCache.coordinates.coordinates[0]
-            [iconUrl]=getIconUrl(geoCache.type)>
+            [iconUrl]=getIconUrl(geoCache.type)
+            (markerClick)="processMarkerClick(geoCache)">
       <agm-info-window>
-        <p [innerHTML]="geoCache.gcCode"></p>
+        <p [innerHTML]="selectedGeoCacheData"></p>
       </agm-info-window>
     </agm-marker>
   <!--</agm-marker-cluster>-->

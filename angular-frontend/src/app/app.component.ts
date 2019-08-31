@@ -21,6 +21,7 @@ export class AppComponent {
   lngQueryLast: number;
 
   public geoCacheList = [];
+  public selectedGeoCacheData = "";
 
   constructor(private dataService: DataService) {
 
@@ -61,7 +62,16 @@ export class AppComponent {
       radius = 100000;
     }
 
-    this.dataService.getGeoCacheData(this.latQuery, this.lngQuery, radius).subscribe(resultList => this.geoCacheList = resultList);
+    this.dataService.getGeoCacheList(this.latQuery, this.lngQuery, radius).subscribe(resultList => this.geoCacheList = resultList);
+ }
+
+ processMarkerClick(geoCache) {
+  this.dataService.getGeoCacheData(geoCache.href).subscribe(res => this.setSelectionMarkerData(res));
+ }
+
+ setSelectionMarkerData(selectedGeoCache) {
+  this.selectedGeoCacheData = selectedGeoCache.gcCode + " - " + selectedGeoCache.name + "<br>"
+    + "D" + selectedGeoCache.difficulty + " / T" + selectedGeoCache.terrain;
  }
 
 /**

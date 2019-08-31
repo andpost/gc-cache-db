@@ -6,6 +6,9 @@ import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { AgmCoreModule } from '@agm/core';
 //import { AgmJsMarkerClustererModule } from '@agm/js-marker-clusterer';
+import { LAZY_MAPS_API_CONFIG } from '@agm/core/services';
+import {GoogleMapsConfig} from './app.googlemapsconfig';
+
 
 @NgModule({
   imports: [
@@ -13,12 +16,10 @@ import { AgmCoreModule } from '@agm/core';
     CommonModule,
     FormsModule,
     HttpModule,
-    AgmCoreModule.forRoot({
-      apiKey: 'AIzaSyAE2xFGWvAQWJ1LaW3uHC_BH-_xgF34iP4'
-    }),
+    AgmCoreModule.forRoot(),
     //AgmJsMarkerClustererModule
   ],
-  providers: [],
+  providers: [{provide: LAZY_MAPS_API_CONFIG, useClass: GoogleMapsConfig}],
   declarations: [
     AppComponent
   ],
