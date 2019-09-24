@@ -50,7 +50,7 @@ export class AppComponent implements OnInit {
   }
 
   processMoveend() {
-    this.markerDelAgain();
+    this.removeMarkers();
     this.listGeoCaches(this.map.getCenter().lat, this.map.getCenter().lng, 1000);
   }
 
@@ -60,26 +60,27 @@ export class AppComponent implements OnInit {
 
   showCaches(cacheList: GeoCache[]) {
     cacheList.forEach(cache => {
-      var marker = L.marker([cache.coordinates.coordinates[1], cache.coordinates.coordinates[0]], this.getIcon(cache)).addTo(this.map);
+      var marker = L.marker([cache.coordinates.coordinates[1], cache.coordinates.coordinates[0]], this.getIcon(cache, true)).addTo(this.map);
       marker.bindPopup(this.getCacheDetailsHtml(cache)).openPopup();
       this.shownMarkers.push(marker);
     });
   }
 
-  markerDelAgain() {
+  removeMarkers() {
     this.shownMarkers.forEach(marker => this.map.removeLayer(marker));
   }
 
   getCacheDetailsHtml(cache : GeoCache) {
-    return "<img src=\"" + this.getIconUrl(cache.type) + "\"/><b>" + cache.gcCode + " " + cache.name + "</b>";
+    return "<img src=\"" + this.getIconUrl(cache.type, false) + "\"/><b>"
+     + " " + cache.name + "</b><br />" + cache.gcCode;
   }
 
-  getIcon(cache: GeoCache) {
+  getIcon(cache: GeoCache, isMarker: boolean) {
     var icon = {
       icon: L.icon({
         iconSize: [20, 23],
         iconAnchor: [13, 0],
-        iconUrl: this.getIconUrl(cache.type)
+        iconUrl: this.getIconUrl(cache.type, isMarker)
       })
     };
 
@@ -94,49 +95,14 @@ export class AppComponent implements OnInit {
 * 
 * @param cacheType 
 */
-  getIconUrl(cacheType: string) {
+  getIconUrl(cacheType: string, isMarker: boolean) {
 
     var baseUrl = "assets/images/";
 
-    if (cacheType == "TRADITIONAL" || cacheType == "Traditional Cache") {
-      return baseUrl + "pin_tradi.png"; // 2
-    } else if (cacheType == "MULTI" || cacheType == "Multi-cache") {
-      return baseUrl + "pin_multi.png"; // 3
-    } else if (cacheType == "MYSTERY" || cacheType == "Unknown Cache") {
-      return baseUrl + "pin_mystery.png"; // 8
-    } else if (cacheType == "EARTHCACHE" || cacheType == "Earthcache") {
-      return baseUrl + "pin_ec.png"; // 137
-    } else if (cacheType == "LETTERBOX" || cacheType == "Letterbox Hybrid") {
-      return baseUrl + "pin_letterbox.png"; // 5
-    } else if (cacheType == "EVENT" || cacheType == "Event Cache") {
-      return baseUrl + "pin_event.png"; // 6
-    } else if (cacheType == "CITO" || cacheType == "Cache In Trash Out Event") {
-      return baseUrl + "pin_cito.png"; // 13
-    } else if (cacheType == "MEGA_EVENT" || cacheType == "Mega-Event Cache") {
-      return baseUrl + "pin_mega.png"; // 453
-    } else if (cacheType == "GIGA_EVENT" || cacheType == "Giga-Event Cache") {
-      return baseUrl + "pin_giga.png"; // 7005
-    } else if (cacheType == "WHERIGO" || cacheType == "Wherigo Cache") {
-      return baseUrl + "pin_wig.png"; // 1858
-    } else if (cacheType == "GPS_ADVENTURE" || cacheType == "GPS Adventures Exhibit") {
-      return baseUrl + "pin_maze.png"; // 1304
-    } else if (cacheType == "VIRTUAL" || cacheType == "Virtual Cache") {
-      return baseUrl + "pin_virtual.png"; // 4
-    } else if (cacheType == "WEBCAM" || cacheType == "Webcam Cache") {
-      return baseUrl + "pin_virtual.png"; // 11
-    } else if (cacheType == "LNF_EVENT" || cacheType == "Lost and Found Event Cache") {
-      return baseUrl + "pin_lnf.png"; // 3653
-    } else if (cacheType == "LAB") {
-      return baseUrl + "pin_labs.png"; // ?
-    } else if (cacheType == "APE") {
-      return baseUrl + "pin_ape.png"; // 9
-    } else if (cacheType == "HQ") {
-      return baseUrl + "pin_hq.png"; // 3773
-    } else if (cacheType == "REVERSE") {
-      return baseUrl + "pin_locationless_reverse.png"; // 12
-    } else if (cacheType == "BLOCK_PARTY") {
-      return baseUrl + "pin_blockparty.png"; // 4738
+    if (isMarker) {
+      baseUrl += "marker_";
     }
-    return "http://maps.google.com/mapfiles/ms/micons/red.png";
+
+    return baseUrl + cacheType.toLowerCase() + ".png";
   }
 }

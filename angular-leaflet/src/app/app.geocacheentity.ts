@@ -9,6 +9,8 @@ export interface GeoCache {
     coordinates: Point;
     
     type : string;
+
+    placedBy : string;
 }
 
 export interface Point {
